@@ -7,6 +7,11 @@
   <title>Nexus - Attendance Tracker</title>
   <meta name="description" content="Nexus - Attendance Tracker for Roll Number 187, Room 6">
   <meta name="theme-color" content="#0D0D0D">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Nexus">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="Code_Generated_Image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -1029,6 +1034,182 @@
       margin-top: 6px;
       font-style: italic;
     }
+
+    /* Subject-wise Attendance Cards */
+    .subject-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .subject-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 14px;
+      border-left: 4px solid var(--accent-primary);
+    }
+
+    .subject-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .subject-code {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .subject-percent {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .subject-name {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subject-progress-bar {
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .subject-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .subject-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    /* Quick Daily Logger */
+    .quick-log-section {
+      margin-top: 8px;
+    }
+
+    .quick-log-period {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid var(--bg-tertiary);
+    }
+
+    .quick-log-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .quick-log-subject {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .quick-log-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .quick-log-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .quick-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--bg-tertiary);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .quick-btn:hover {
+      border-color: var(--text-secondary);
+    }
+
+    .quick-btn.active.present {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .quick-btn.active.absent {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+
+    .quick-btn.active.cancelled {
+      background: var(--neutral);
+      border-color: var(--neutral);
+      color: white;
+    }
+
+    .no-class-today {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      border-radius: 12px;
+    }
+
+    .no-class-today i {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+      color: var(--accent-primary);
+    }
+
+    /* Install App Button */
+    .install-btn {
+      background: linear-gradient(135deg, var(--accent-primary), #00BFA5);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .install-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 20px rgba(41, 98, 255, 0.3);
+    }
+
+    .install-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
   </style>
 </head>
 
@@ -1302,13 +1483,55 @@
       }
     }
 
+    function calculateSubjectStats() {
+      const subjectStats = {};
+      // Initialize stats for each subject (exclude CIA)
+      for (const code in SUBJECTS) {
+        if (code === 'CIA') continue;
+        subjectStats[code] = { present: 0, absent: 0, cancelled: 0, total: 0, percent: 0 };
+      }
+
+      for (const dateStr in state.logs) {
+        if (isBeforeSemester(dateStr)) continue;
+        const log = state.logs[dateStr];
+        const schedule = getDaySchedule(dateStr);
+        if (!schedule) continue;
+
+        for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+          const subjectCode = schedule[period];
+          if (subjectCode && subjectStats[subjectCode]) {
+            const s = log[period];
+            if (s === "present") subjectStats[subjectCode].present++;
+            else if (s === "absent") subjectStats[subjectCode].absent++;
+            else if (s === "cancelled") subjectStats[subjectCode].cancelled++;
+          }
+        }
+      }
+
+      // Calculate percentages
+      for (const code in subjectStats) {
+        const s = subjectStats[code];
+        s.total = s.present + s.absent;
+        s.percent = s.total > 0 ? (s.present / s.total) * 100 : 0;
+      }
+
+      return subjectStats;
+    }
+
     function renderDashboard() {
       const stats = calculateStats();
       const bunk = calculateBunk(stats);
+      const subjectStats = calculateSubjectStats();
       const circumference = 2 * Math.PI * 88;
       const offset = circumference - (stats.percent / 100) * circumference;
 
-      document.getElementById("dashboardView").innerHTML = `
+      const today = new Date();
+      const dateStr = formatDate(today);
+      const dayName = DAYS[today.getDay()];
+      const schedule = getDaySchedule(dateStr);
+      const log = state.logs[dateStr] || {};
+
+      let html = `
     <div class="card progress-container">
       <div class="progress-ring">
         <svg width="200" height="200">
@@ -1346,8 +1569,82 @@
       <div class="stat-card danger"><div class="stat-value">${stats.absent}</div><div class="stat-label">Absent</div></div>
       <div class="stat-card neutral"><div class="stat-value">${stats.cancelled}</div><div class="stat-label">Cancelled</div></div>
     </div>
-  `;
+
+    <div class="section-title"><i class="fas fa-graduation-cap"></i> Subject-wise Attendance</div>
+    <div class="subject-grid">`;
+
+      // Add subject cards
+      for (const code in subjectStats) {
+        const s = subjectStats[code];
+        const subject = SUBJECTS[code];
+        const percentColor = s.percent >= state.settings.targetPercentage ? 'var(--success)' :
+          s.percent >= 60 ? 'var(--warning)' : 'var(--danger)';
+
+        html += `
+      <div class="subject-card" style="border-left-color: ${subject.color}">
+        <div class="subject-card-header">
+          <span class="subject-code">${code}</span>
+          <span class="subject-percent" style="color: ${percentColor}">${s.percent.toFixed(0)}%</span>
+        </div>
+        <div class="subject-name">${subject.name}</div>
+        <div class="subject-progress-bar">
+          <div class="subject-progress-fill" style="width: ${s.percent}%; background: ${subject.color}"></div>
+        </div>
+        <div class="subject-stats">
+          <span>P: ${s.present}</span>
+          <span>A: ${s.absent}</span>
+          <span>C: ${s.cancelled}</span>
+        </div>
+      </div>`;
+      }
+
+      html += `</div>
+
+    <div class="section-title"><i class="fas fa-calendar-check"></i> Today's Classes</div>
+    <div class="quick-log-section">`;
+
+      if (isBeforeSemester(dateStr)) {
+        html += `<div class="no-class-today"><i class="fas fa-hourglass-start"></i><div>Semester starts Jan 5, 2026</div></div>`;
+      } else if (!schedule) {
+        html += `<div class="no-class-today"><i class="fas fa-umbrella-beach"></i><div>No classes today!</div></div>`;
+      } else {
+        for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+          const subjectCode = schedule[period];
+          const slot = TIME_SLOTS[period];
+          const subject = subjectCode ? SUBJECTS[subjectCode] : null;
+          const status = log[period] || null;
+
+          if (subject) {
+            html += `
+      <div class="quick-log-period" style="border-left-color: ${subject.color}">
+        <div class="quick-log-info">
+          <div class="quick-log-subject">${subjectCode}</div>
+          <div class="quick-log-time">${slot.start} - ${slot.end}</div>
+        </div>
+        <div class="quick-log-btns">
+          <button class="quick-btn present ${status === 'present' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','present')" title="Present"><i class="fas fa-check"></i></button>
+          <button class="quick-btn absent ${status === 'absent' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','absent')" title="Absent"><i class="fas fa-times"></i></button>
+          <button class="quick-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','cancelled')" title="Cancelled"><i class="fas fa-minus"></i></button>
+        </div>
+      </div>`;
+          }
+        }
+      }
+
+      html += `</div>`;
+      document.getElementById("dashboardView").innerHTML = html;
     }
+
+    function quickLog(dateStr, period, status) {
+      if (isBeforeSemester(dateStr)) return;
+      if (!state.logs[dateStr]) state.logs[dateStr] = {};
+      state.logs[dateStr][period] = state.logs[dateStr][period] === status ? null : status;
+      state.lastLoggedDate = dateStr;
+      saveState();
+      renderDashboard();
+      renderLogger();
+    }
+
 
     function renderLogger() {
       const today = new Date();
@@ -1647,9 +1944,16 @@
     }
 
     function renderSettings() {
+      const installBtnHtml = deferredPrompt ? `
+      <div class="settings-item">
+        <div class="settings-info"><h3>Install App</h3><p>Add to your home screen</p></div>
+        <button class="install-btn" onclick="installApp()"><i class="fas fa-download"></i> Install</button>
+      </div>` : '';
+
       document.getElementById("settingsView").innerHTML = `
     <div class="section-title"><i class="fas fa-sliders-h"></i> Settings</div>
     <div class="card">
+      ${installBtnHtml}
       <div class="settings-item">
         <div class="settings-info"><h3>Target Percentage</h3><p>Minimum attendance goal</p></div>
         <div class="slider-container">
@@ -1746,6 +2050,33 @@
     }
 
     // Init
+    let deferredPrompt = null;
+
+    // PWA Install Prompt
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      renderSettings();
+    });
+
+    function installApp() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          deferredPrompt = null;
+          renderSettings();
+        }
+      });
+    }
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+
     document.getElementById("headerDate").textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     document.querySelectorAll('.bottom-nav button').forEach(btn => {
       btn.addEventListener('click', () => showView(btn.dataset.view));
