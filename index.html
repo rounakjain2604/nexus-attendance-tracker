@@ -550,7 +550,6 @@
     .calendar-day.pre-semester {
       color: var(--text-muted);
       opacity: 0.4;
-      pointer-events: none;
     }
 
     .calendar-day.holiday {
@@ -934,6 +933,101 @@
       background: var(--bg-tertiary);
       border-radius: 8px;
       font-size: 0.85rem;
+    }
+
+    /* Enhanced Syllabus Styles */
+    .syllabus-topic-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .syllabus-topic-item {
+      margin-bottom: 12px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      border-left: 3px solid var(--accent-primary);
+    }
+
+    .topic-label {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent-primary), #00BFA5);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .topic-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .subtopic-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .subtopic-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .subtopic-item:last-child {
+      border-bottom: none;
+    }
+
+    .subtopic-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      background: rgba(41, 98, 255, 0.15);
+      color: var(--accent-primary);
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .subtopic-content {
+      flex: 1;
+    }
+
+    .keyword-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .keyword-tag {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    .unit-description {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-style: italic;
     }
   </style>
 </head>
@@ -1435,8 +1529,10 @@
 
     function selectDate(dateStr) {
       const d = new Date(dateStr + "T00:00:00");
-      if (d > new Date()) return;
-      if (isBeforeSemester(dateStr) && !CALENDAR_EVENTS[dateStr]) return;
+      // Block only future dates
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (d > today) return;
       selectedCalendarDate = selectedCalendarDate === dateStr ? null : dateStr;
       renderCalendar();
     }
@@ -1460,12 +1556,83 @@
 
         for (const section of subj.sections) {
           html += `<div class="section-divider">${section.title}</div>`;
+          html += `<ul class="syllabus-topic-list">`;
+
           for (const unit of section.units) {
-            html += `<div class="syllabus-unit">
-          <div class="unit-header">${unit.name}${unit.priority > 0 ? `<span class="priority-badge">+${unit.priority}</span>` : ''}</div>
-          <div class="unit-topics">${unit.content.replace(/\n/g, '<br>')}</div>
-        </div>`;
+            html += `<li class="syllabus-topic-item">
+              <div class="unit-header">${unit.name}${unit.priority > 0 ? `<span class="priority-badge">+${unit.priority}</span>` : ''}</div>`;
+
+            // Parse the content into structured subtopics
+            const content = unit.content;
+            const subtopics = content.split(/\n/).filter(s => s.trim());
+
+            if (subtopics.length > 0) {
+              html += `<ul class="subtopic-list">`;
+
+              for (const subtopic of subtopics) {
+                // Check if it starts with a letter marker like (a), (b), etc.
+                const markerMatch = subtopic.match(/^\(([a-z])\)\s*/i);
+                if (markerMatch) {
+                  const marker = markerMatch[1].toUpperCase();
+                  const text = subtopic.replace(/^\([a-z]\)\s*/i, '');
+
+                  // Split by colon to get title and keywords
+                  const colonIndex = text.indexOf(':');
+                  if (colonIndex > 0 && colonIndex < 50) {
+                    const title = text.substring(0, colonIndex).trim();
+                    const details = text.substring(colonIndex + 1).trim();
+
+                    // Split details by semicolons for keyword tags
+                    const keywords = details.split(/[;,]/).map(k => k.trim()).filter(k => k.length > 0 && k.length < 60);
+
+                    html += `<li class="subtopic-item">
+                      <span class="subtopic-marker">${marker}</span>
+                      <div class="subtopic-content">
+                        <div class="topic-title">${title}</div>
+                        <div class="keyword-list">
+                          ${keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}
+                        </div>
+                      </div>
+                    </li>`;
+                  } else {
+                    html += `<li class="subtopic-item">
+                      <span class="subtopic-marker">${marker}</span>
+                      <div class="subtopic-content">${text}</div>
+                    </li>`;
+                  }
+                } else {
+                  // No marker, display as regular content
+                  const colonIndex = subtopic.indexOf(':');
+                  if (colonIndex > 0 && colonIndex < 50) {
+                    const title = subtopic.substring(0, colonIndex).trim();
+                    const details = subtopic.substring(colonIndex + 1).trim();
+                    const keywords = details.split(/[;,]/).map(k => k.trim()).filter(k => k.length > 0 && k.length < 60);
+
+                    html += `<li class="subtopic-item">
+                      <span class="subtopic-marker">•</span>
+                      <div class="subtopic-content">
+                        <div class="topic-title">${title}</div>
+                        <div class="keyword-list">
+                          ${keywords.map(k => `<span class="keyword-tag">${k}</span>`).join('')}
+                        </div>
+                      </div>
+                    </li>`;
+                  } else {
+                    html += `<li class="subtopic-item">
+                      <span class="subtopic-marker">•</span>
+                      <div class="subtopic-content">${subtopic}</div>
+                    </li>`;
+                  }
+                }
+              }
+
+              html += `</ul>`;
+            }
+
+            html += `</li>`;
           }
+
+          html += `</ul>`;
         }
 
         html += `</div></div>`;
