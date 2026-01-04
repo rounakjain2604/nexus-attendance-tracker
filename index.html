@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Nexus - Attendance Tracker</title>
+  <meta name="description" content="Nexus - Attendance Tracker for Roll Number 187, Room 6">
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-primary: #0D0D0D;
+      --bg-secondary: #1A1A1A;
+      --bg-tertiary: #252525;
+      --text-primary: #F5F5F5;
+      --text-secondary: #A3A3A3;
+      --text-muted: #6B6B6B;
+      --accent-primary: #2962FF;
+      --accent-glow: rgba(41, 98, 255, 0.15);
+      --success: #00C853;
+      --danger: #FF5252;
+      --warning: #FFD600;
+      --neutral: #757575;
+      --event-holiday: #FF5252;
+      --event-noclass: #FF9800;
+      --event-special: #9C27B0;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+
+    .app-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      background: linear-gradient(135deg, #2962FF, #00BFA5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-date {
+      font-weight: 300;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    main {
+      padding: 80px 16px 100px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .view {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+    }
+
+    .progress-ring {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+
+    .progress-ring svg {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 12;
+      stroke-linecap: round;
+    }
+
+    .progress-ring .bg {
+      stroke: var(--bg-tertiary);
+    }
+
+    .progress-ring .fg {
+      stroke: var(--accent-primary);
+      transition: stroke-dashoffset 0.6s ease;
+    }
+
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .progress-percent {
+      font-size: 2.75rem;
+      font-weight: 700;
+    }
+
+    .progress-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      margin-top: 4px;
+    }
+
+    .stat-card.success .stat-value {
+      color: var(--success);
+    }
+
+    .stat-card.danger .stat-value {
+      color: var(--danger);
+    }
+
+    .stat-card.warning .stat-value {
+      color: var(--warning);
+    }
+
+    .stat-card.neutral .stat-value {
+      color: var(--neutral);
+    }
+
+    .bunk-card {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .bunk-card.safe {
+      border: 1px solid rgba(0, 200, 83, 0.3);
+      background: rgba(0, 200, 83, 0.05);
+    }
+
+    .bunk-card.danger {
+      border: 1px solid rgba(255, 82, 82, 0.3);
+      background: rgba(255, 82, 82, 0.05);
+    }
+
+    .bunk-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .bunk-icon.safe {
+      color: var(--success);
+    }
+
+    .bunk-icon.danger {
+      color: var(--warning);
+    }
+
+    .bunk-text {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .bunk-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .target-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .target-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .target-icon {
+      font-size: 1.25rem;
+      color: var(--accent-primary);
+    }
+
+    .target-label {
+      font-weight: 500;
+    }
+
+    .target-value {
+      font-weight: 700;
+      color: var(--accent-primary);
+      font-size: 1.25rem;
+    }
+
+    .target-edit {
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .target-edit:hover {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .period-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--bg-tertiary);
+    }
+
+    .period-card.no-class {
+      opacity: 0.5;
+    }
+
+    .period-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .period-info h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .period-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .period-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .status-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .status-btn {
+      flex: 1;
+      padding: 10px 8px;
+      border: 1px solid var(--bg-tertiary);
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .status-btn:hover {
+      border-color: var(--text-muted);
+    }
+
+    .status-btn.active.present {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .status-btn.active.absent {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+
+    .status-btn.active.cancelled {
+      background: var(--neutral);
+      border-color: var(--neutral);
+      color: white;
+    }
+
+    .no-class-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .weekend-msg {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .weekend-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      color: var(--accent-primary);
+    }
+
+    .weekend-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .weekend-subtitle {
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .cia-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .cia-label {
+      font-weight: 500;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: var(--bg-secondary);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-switch.active {
+      background: var(--accent-primary);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .toggle-switch.active::after {
+      left: 27px;
+    }
+
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .calendar-nav {
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .calendar-nav:hover {
+      background: var(--accent-primary);
+    }
+
+    .calendar-month {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .calendar-day-label {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      padding: 8px 0;
+      font-weight: 500;
+    }
+
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .calendar-day:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .calendar-day.empty {
+      pointer-events: none;
+    }
+
+    .calendar-day.today {
+      border: 2px solid var(--accent-primary);
+    }
+
+    .calendar-day.selected {
+      background: var(--accent-primary);
+      color: white;
+    }
+
+    .calendar-day.future {
+      color: var(--text-muted);
+    }
+
+    .calendar-day.weekend {
+      color: var(--text-muted);
+    }
+
+    .calendar-day.pre-semester {
+      color: var(--text-muted);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .calendar-day.holiday {
+      background: rgba(255, 82, 82, 0.2);
+    }
+
+    .calendar-day.no-class-day {
+      background: rgba(255, 152, 0, 0.2);
+    }
+
+    .calendar-day.event-day {
+      background: rgba(156, 39, 176, 0.2);
+    }
+
+    .day-dot {
+      position: absolute;
+      bottom: 4px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .day-dot.green {
+      background: var(--success);
+    }
+
+    .day-dot.yellow {
+      background: var(--warning);
+    }
+
+    .day-dot.red {
+      background: var(--danger);
+    }
+
+    .event-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .event-badge.holiday {
+      background: var(--event-holiday);
+    }
+
+    .event-badge.noclass {
+      background: var(--event-noclass);
+    }
+
+    .event-badge.special {
+      background: var(--event-special);
+    }
+
+    .day-details {
+      margin-top: 16px;
+    }
+
+    .day-details-header {
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .event-info {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .event-info .event-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .event-info .event-status {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .event-info .event-status.holiday {
+      background: var(--event-holiday);
+      color: white;
+    }
+
+    .event-info .event-status.noclass {
+      background: var(--event-noclass);
+      color: white;
+    }
+
+    .event-info .event-status.classday {
+      background: var(--success);
+      color: white;
+    }
+
+    .day-detail-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .day-detail-period {
+      font-weight: 500;
+      min-width: 30px;
+    }
+
+    .day-detail-subject {
+      flex: 1;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .day-detail-status {
+      font-size: 1.25rem;
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .settings-info h3 {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .settings-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+    }
+
+    .settings-btn {
+      background: var(--bg-tertiary);
+      border: none;
+      color: var(--text-primary);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .settings-btn:hover {
+      background: var(--accent-primary);
+    }
+
+    .settings-btn.danger {
+      background: rgba(255, 82, 82, 0.1);
+      color: var(--danger);
+    }
+
+    .settings-btn.danger:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 120px;
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--accent-primary);
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .slider-value {
+      font-weight: 700;
+      min-width: 45px;
+      text-align: right;
+    }
+
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 26, 26, 0.95);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    nav.bottom-nav button {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-family: inherit;
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 8px 12px;
+    }
+
+    nav.bottom-nav button i {
+      font-size: 1.25rem;
+    }
+
+    nav.bottom-nav button.active {
+      color: var(--accent-primary);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .modal p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-btn.cancel {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .modal-btn.confirm {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* Syllabus Styles */
+    .syllabus-subject {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .syllabus-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .syllabus-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .syllabus-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .syllabus-meta {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .credit-badge {
+      background: var(--accent-primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .syllabus-content {
+      padding: 0 16px 16px;
+      display: none;
+    }
+
+    .syllabus-content.active {
+      display: block;
+    }
+
+    .syllabus-unit {
+      margin-bottom: 16px;
+    }
+
+    .unit-header {
+      font-weight: 600;
+      color: var(--accent-primary);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+
+    .unit-topics {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .priority-badge {
+      background: var(--warning);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    .section-divider {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 16px 0 12px;
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-left">
+      <img src="Code_Generated_Image.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <span class="app-title">Nexus</span>
+    </div>
+    <span class="header-date" id="headerDate"></span>
+  </header>
+
+  <main>
+    <section id="dashboardView" class="view active"></section>
+    <section id="loggerView" class="view"></section>
+    <section id="calendarView" class="view"></section>
+    <section id="syllabusView" class="view"></section>
+    <section id="settingsView" class="view"></section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button data-view="dashboard" class="active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></button>
+    <button data-view="logger"><i class="fas fa-edit"></i><span>Log Today</span></button>
+    <button data-view="calendar"><i class="fas fa-calendar-alt"></i><span>Calendar</span></button>
+    <button data-view="syllabus"><i class="fas fa-book"></i><span>Syllabus</span></button>
+    <button data-view="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
+  </nav>
+
+  <div class="modal-overlay" id="resetModal">
+    <div class="modal">
+      <h3>Reset All Data?</h3>
+      <p>This will permanently delete all your attendance logs and settings. This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn confirm" onclick="confirmReset()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SEMESTER_START = "2026-01-05";
+
+    const TIME_SLOTS = {
+      P1: { start: "06:00", end: "06:40", label: "Period 1" },
+      P2: { start: "06:40", end: "07:20", label: "Period 2" },
+      P3: { start: "07:20", end: "08:00", label: "Period 3" },
+      P4: { start: "08:30", end: "09:10", label: "Period 4" },
+      P5: { start: "09:10", end: "09:50", label: "Period 5" }
+    };
+
+    const SUBJECTS = {
+      AUDA: { name: "Audit & Assurance", color: "#7C4DFF" },
+      IDTX: { name: "Indirect Tax Laws", color: "#00BFA5" },
+      ETCG: { name: "Ethics & Corp. Governance", color: "#FF6D00" },
+      FRFS: { name: "Financial Reporting", color: "#448AFF" },
+      INBA: { name: "International Business", color: "#E91E63" },
+      CIA: { name: "CIA Seminar", color: "#9C27B0" }
+    };
+
+    const SCHEDULE = {
+      Monday: { P1: "IDTX", P2: "IDTX", P3: "AUDA", P4: "FRFS", P5: "FRFS" },
+      Tuesday: { P1: "INBA", P2: "AUDA", P3: "AUDA", P4: "FRFS", P5: "FRFS" },
+      Wednesday: { P1: "ETCG", P2: "INBA", P3: "IDTX", P4: "ETCG", P5: null },
+      Thursday: { P1: "IDTX", P2: "ETCG", P3: "AUDA", P4: "IDTX", P5: "INBA" },
+      Friday: { P1: "INBA", P2: "AUDA", P3: "ETCG", P4: null, P5: null },
+      Saturday: null,
+      Sunday: null
+    };
+
+    const CALENDAR_EVENTS = {
+      "2026-01-16": { title: "166th College Foundation Day & 19th Convocation", status: "noclass", label: "NO CLASS DAY" },
+      "2026-01-17": { title: "Xavotsav 2026", status: "special", label: "EVENT" },
+      "2026-01-18": { title: "Xavotsav 2026", status: "special", label: "EVENT" },
+      "2026-01-19": { title: "Valedictory & Prize Distribution (3:00 PM)", status: "classday", label: "CLASS DAY" },
+      "2026-01-23": { title: "Netaji's Birth Anniversary", status: "holiday", label: "HOLIDAY" },
+      "2026-01-24": { title: "Beyond Barriers XXIV", status: "holiday", label: "HOLIDAY" },
+      "2026-01-26": { title: "Republic Day", status: "holiday", label: "HOLIDAY" },
+      "2026-01-31": { title: "Annual Sports Day", status: "noclass", label: "NO CLASS DAY" }
+    };
+
+    const SYLLABUS = {
+      IDTX: {
+        name: "Indirect Taxation",
+        code: "C3BC20621T",
+        credits: 4,
+        sections: [
+          {
+            title: "Goods & Service Tax (60 Marks)",
+            units: [
+              { name: "Unit 1: Basic Concepts & Taxable Events", priority: 2, content: "(a) Basic concept of GST: Difference between direct and indirect tax; Pre-GST indirect tax structure; Post-GST structure; GST Council; Concepts of Aggregate turnover, Business, Person, Taxable person, Taxable territory, Supplier, Recipient, Import.\n(b) Taxable event in GST: Supply as per GST Law; Meaning of goods and services; Negative list (Schedule-3); Deemed supply; Services by Govt./Local Authority; Types of supply (Intra/Inter-State, taxable, zero-rated, exempted, continuous, composite, mixed); Schedule I or II activities." },
+              { name: "Unit 2: Registration & Levy", priority: 3, content: "(a) Registration: Requirements; Persons liable/not liable; Compulsory registration; Procedure; Voluntary registration; UIN for UN Agencies; Casual/Non-resident taxable persons; Cancellation.\n(b) Levy and Exemption: Basic charge; Intra/inter-state levy; Rates; Brief idea of exemptions." },
+              { name: "Unit 3: Valuation, Time & Place of Supply", priority: 3, content: "(a) Value of taxable supply: Transaction value; Inclusion/Exclusion; Valuation Rules (consideration not in money, exchange/barter, distinct/related persons, agents, cost-based, pure agent).\n(b) Time of Supply: Statutory time for invoice; Determination for goods (Sec.12) and services (Sec.13); Advances; Continuous supply; Reverse charge; Vouchers.\n(c) Place of Supply: Location of supplier; Place of supply for goods (domestic/imported/exported) and services (domestic)." },
+              { name: "Unit 4: ITC, Computation, Reverse Charge & Composition", priority: 3, content: "(a) Input Tax Credit (ITC): Conditions; Time limit; Documentary requirements; Allowed payments (SGST, CGST, etc.); Reversal; Ineligible supply; Capital goods; Special cases (fresh/voluntary registration); Switching schemes.\n(b) Reverse Charge: Meaning and applicability.\n(c) Composition Scheme: Definition; Eligibility; Conditions; Procedure; Validity; Withdrawal; Switch over." }
+            ]
+          },
+          {
+            title: "Customs Duty (40 Marks)",
+            units: [
+              { name: "Unit 5: Basic Concepts & Import/Export Flow", priority: 0, content: "(a) Basic concept: Territorial Waters, EZ, High Seas, Customs Station/Area, Import/Export concepts; Charging Sec.12; Taxable event; Re-importation.\n(b) Types of Duty: Types of duties and cess; calculation.\n(c) Flow of Imports & Exports: Import procedures (unloading, Bill of Entry, clearance); Export procedures (shipping bill, entry outwards, delivery of manifest)." },
+              { name: "Unit 6: Valuation, Baggage & Drawback", priority: 0, content: "(a) Valuation: Exchange rates; Date for duty rate; Assessable value inclusions/exclusions; Valuation methods.\n(b) Baggage: Rules (excluding courier/post).\n(c) Duty Drawback: Re-export of duty-paid goods (Sec.74); Imported materials used in manufactured exports (Sec.75)." }
+            ]
+          }
+        ]
+      },
+      AUDA: {
+        name: "Auditing and Assurance",
+        code: "C3BC230611T",
+        credits: 4,
+        sections: [
+          {
+            title: "Full Syllabus",
+            units: [
+              { name: "Unit 1: Nature of Auditing", priority: 1, content: "Concept, Need, and Objectives; Expectation Gap; Scope and procedures; Errors and Fraud; Inherent Limitations; Qualities of an Auditor." },
+              { name: "Unit 2: Audit Engagement", priority: 1, content: "Concept; Types of Audit Engagement; Assurance Engagements; Review Engagement; Quality Control Standards." },
+              { name: "Unit 3: Different Types of Audit", priority: 1, content: "Classification on the basis of: Organization, Function, Practical Approach, and Audit Dimension." },
+              { name: "Unit 4: Audit Strategy, Planning and Audit Programme", priority: 1, content: "Preparatory Steps; Auditor's Responsibility to plan; Audit Strategy vs. Audit Plan; Supervision and Review; Audit Programme; Documentation (Working Papers, ownership, preservation)." },
+              { name: "Unit 5: Risk Assessment and Internal Control", priority: 3, content: "Audit Risk: Concept, Components, Assessment Procedures, Materiality.\nInternal Control: Elements, Evaluation, Check List, Questionnaire, COSO Framework, Internal Financial Control, Internal Check." },
+              { name: "Unit 6: Techniques and Procedures of Auditing", priority: 1, content: "Audit Evidence (Types, Sources, Methods); Audit Techniques (Concepts and important techniques)." },
+              { name: "Unit 7: Audit of Items of Financial Statements", priority: 1, content: "Vouching, Verification, and Valuation of Income Statement Items (Revenue, Expense) and Balance Sheet Items (Equity, Liabilities, Assets)." },
+              { name: "Unit 8: Company Audit", priority: 1, content: "Preliminaries; Specific Provisions in Companies Act; Appointment/Rotation/Removal of Auditors; Remuneration; Rights, Duties, Liabilities; Audit Committee; Joint/Branch Auditors." },
+              { name: "Unit 9: Audit Report", priority: 1, content: "Forming an Opinion; Essentials of Good Report; Types of Reports; Modifications; Emphasis of Matter; Key Audit Matters; CARO 2020; Audit Certificates." },
+              { name: "Unit 10: New Areas of Auditing", priority: 1, content: "Cost, Management, Social, Tax, GST, System, Forensic, and Environmental Audit." },
+              { name: "Unit 11: Special Audit", priority: 1, content: "Government Audit (CAG); Local Bodies; NGOs; LLP; Charitable Institutions; Educational Institutions; Hospitals; Clubs; Cinema Halls; Hotels; Cooperative Societies." },
+              { name: "Unit 12: Ethics in Auditing and Independence", priority: 0, content: "Professional Ethics (Principles); Auditor's Independence (Threats, Safeguards)." }
+            ]
+          }
+        ]
+      },
+      FRFS: {
+        name: "Financial Reporting and Financial Statement Analysis",
+        code: "C3BC230631T",
+        credits: 4,
+        sections: [
+          {
+            title: "Section 1: Financial Reporting (50 Marks)",
+            units: [
+              { name: "Unit 1: Conceptual Framework", priority: 0, content: "Purpose, Qualitative Characteristics, Elements of Financial Statements (Assets, Liabilities, etc.), Recognition, Measurement, Presentation, and Disclosure." },
+              { name: "Unit 2: Presentation of Financial Statement", priority: 0, content: "Introduction to Ind AS (Carve in/out); Ind AS-1; Structure and Content; Division II of Schedule III to Companies Act, 2013." },
+              { name: "Unit 3: Interim Financial Reporting", priority: 0, content: "Concept, Objectives, Scope, Forms, and Contents (Ref: Ind AS 34)." },
+              { name: "Unit 4: Events Occurring after Reporting Period", priority: 0, content: "Adjusting vs. Non-Adjusting Events; Recognition and Measurement (Ref: Ind AS 10)." },
+              { name: "Unit 5: Business Responsibility and Sustainability Reporting (BRSR)", priority: 0, content: "Guidelines, Objectives, Applicability; Sustainability Reporting concepts." },
+              { name: "Unit 6: Fair Value Measurement", priority: 0, content: "Concept, Valuation premises, Valuation Techniques (Ref: Ind AS 113)." }
+            ]
+          },
+          {
+            title: "Section 2: Financial Statement Analysis (50 Marks)",
+            units: [
+              { name: "Unit 1: Introduction to FSA", priority: 0, content: "Nature, Meaning, Need; Traditional vs. Modern approaches; Comparative Statements; Common-size Statements; Trend Analysis." },
+              { name: "Unit 2: Accounting Ratios for FSA", priority: 0, content: "Meaning, Objective, Classification; Preparation of Financial Statements from Ratios; Computation and Interpretation (Liquidity, Solvency, Capital Structure, Profitability, Managerial effectiveness)." },
+              { name: "Unit 3: Cash Flow Statement", priority: 0, content: "Concept; Operating, Financing, Investing Activities; Preparation (Direct and Indirect); Cash Flow Ratios." },
+              { name: "Unit 4: Understanding Annual Report", priority: 0, content: "Qualitative information; MDA (Management Discussion and Analysis)." }
+            ]
+          }
+        ]
+      },
+      INBA: {
+        name: "International Business (Major Elective)",
+        code: "C3BC230651T",
+        credits: 4,
+        sections: [
+          {
+            title: "Full Syllabus",
+            units: [
+              { name: "Unit 1: Globalization and International Business", priority: 0, content: "Key concepts; Domestic vs. International Business; Internal/External Environment (Hofstede's analysis); Risks; Globalization drivers; Modes of entry (licensing, franchising)." },
+              { name: "Unit 2: Theories of International Trade and Investments", priority: 0, content: "Mercantilist, Absolute Advantage, Comparative Advantage, Heckscher-Ohlin; Product Life Cycle, National Competitive Advantage; Service economy shift; Role of FDI (Monopolistic advantage, Dunning's eclectic paradigm)." },
+              { name: "Unit 3: Government Intervention and Regional Integration", priority: 0, content: "Rationale and instruments of intervention; Role of GATT and WTO; Economic blocs and regional integration." },
+              { name: "Unit 4: The International Monetary and Financial System", priority: 0, content: "Exchange rate regimes and determinants; Impact of fluctuations; Currency risk management; Role of BIS, IMF, and World Bank." },
+              { name: "Unit 5: Evolution of Global Value Chains (GVC)", priority: 0, content: "Internationalization of firms (MNEs, SMEs, born global); Value chain internationalization; Determinants of GVC participation; India's integration in GVC." }
+            ]
+          }
+        ]
+      },
+      ETCG: {
+        name: "Ethics and Corporate Governance",
+        code: "C3BC230611T",
+        credits: 4,
+        sections: [
+          {
+            title: "Full Syllabus",
+            units: [
+              { name: "Unit 1: Foundations of Ethics", priority: 1, content: "(a) Ethics: Meaning, Nature.\n(b) Morality: Moral Standards, Kohlberg's Stages, Carol Gilligan's Care Theory.\n(c) Values: Instrumental vs. Terminal.\n(d) Business Ethics: Scope, Arguments for/against." },
+              { name: "Unit 2: Approaches to Ethical Decision-making", priority: 1, content: "(a) Theories: Teleological vs. Deontological, Egoism, Utilitarianism, Kantian, Virtue Ethics.\n(b) Decision-making: Nature of Ethical Dilemmas; Stages in resolution." },
+              { name: "Unit 3: Application of Ethics in Business Functions", priority: 1, content: "Marketing, Human Resource Management, and Finance." },
+              { name: "Unit 4: Corporate Social Responsibility (CSR)", priority: 1, content: "(a) Stakeholder Theory: Internal vs. External.\n(b) CSR: Concept, Regulatory aspects in India, Archie Caroll's Pyramid.\n(c) Sustainability: Triple Bottom Line, Integrated Reporting." },
+              { name: "Unit 5: Corporate Governance", priority: 1, content: "(a) Concept: Governance vs. Management; Misconduct factors.\n(b) Theories: Agency, Stewardship, Stakeholder.\n(c) Models: Anglo-American, German, Japanese, Indian (Family Business).\n(d) Major Issues: Board Composition (Independent/Women Directors); Board Committees (Audit, NRC, SRC, CSR); Whistleblowing Mechanism." }
+            ]
+          }
+        ]
+      }
+    };
+
+    const STORAGE_KEY = "nexusTracker_v1";
+    const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    let state = loadState();
+    let selectedCalendarDate = null;
+    let calendarMonth = new Date().getMonth();
+    let calendarYear = new Date().getFullYear();
+    let expandedSubjects = {};
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+      } catch (e) { console.error("Load error:", e); }
+      return {
+        settings: { targetPercentage: 75, notificationsEnabled: false, ciaSeminarEnabled: false },
+        logs: {},
+        lastLoggedDate: null
+      };
+    }
+
+    function saveState() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+      catch (e) { console.error("Save error:", e); }
+    }
+
+    function formatDate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function isBeforeSemester(dateStr) {
+      return dateStr < SEMESTER_START;
+    }
+
+    function getDaySchedule(dateStr) {
+      if (isBeforeSemester(dateStr)) return null;
+      const d = new Date(dateStr + "T00:00:00");
+      const dayName = DAYS[d.getDay()];
+      let schedule = SCHEDULE[dayName];
+      if (!schedule) return null;
+      schedule = { ...schedule };
+      if (dayName === "Friday" && state.settings.ciaSeminarEnabled) {
+        schedule.P4 = "CIA";
+        schedule.P5 = "CIA";
+      }
+      return schedule;
+    }
+
+    function calculateStats() {
+      let present = 0, absent = 0, cancelled = 0;
+      for (const dateStr in state.logs) {
+        if (isBeforeSemester(dateStr)) continue;
+        const log = state.logs[dateStr];
+        const schedule = getDaySchedule(dateStr);
+        if (!schedule) continue;
+        for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+          if (schedule[period]) {
+            const s = log[period];
+            if (s === "present") present++;
+            else if (s === "absent") absent++;
+            else if (s === "cancelled") cancelled++;
+          }
+        }
+      }
+      const total = present + absent;
+      const percent = total > 0 ? (present / total) * 100 : 0;
+      return { present, absent, cancelled, total, percent };
+    }
+
+    function calculateBunk(stats) {
+      const target = state.settings.targetPercentage;
+      const { present, absent, percent } = stats;
+      if (percent >= target) {
+        const safe = Math.floor((present * 100 - target * (present + absent)) / target);
+        return { type: "safe", value: Math.max(0, safe) };
+      } else {
+        const must = Math.ceil((target * (present + absent) - present * 100) / (100 - target));
+        return { type: "danger", value: Math.max(0, must) };
+      }
+    }
+
+    function renderDashboard() {
+      const stats = calculateStats();
+      const bunk = calculateBunk(stats);
+      const circumference = 2 * Math.PI * 88;
+      const offset = circumference - (stats.percent / 100) * circumference;
+
+      document.getElementById("dashboardView").innerHTML = `
+    <div class="card progress-container">
+      <div class="progress-ring">
+        <svg width="200" height="200">
+          <circle class="bg" cx="100" cy="100" r="88"></circle>
+          <circle class="fg" cx="100" cy="100" r="88" 
+            stroke-dasharray="${circumference}" 
+            stroke-dashoffset="${offset}"></circle>
+        </svg>
+        <div class="progress-text">
+          <div class="progress-percent">${stats.percent.toFixed(1)}%</div>
+          <div class="progress-label">Your Attendance</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card target-card">
+      <div class="target-left">
+        <i class="fas fa-bullseye target-icon"></i>
+        <span class="target-label">Target:</span>
+        <span class="target-value">${state.settings.targetPercentage}%</span>
+      </div>
+      <button class="target-edit" onclick="showView('settings')">Edit</button>
+    </div>
+
+    <div class="card bunk-card ${bunk.type}">
+      <div class="bunk-icon ${bunk.type}"><i class="fas ${bunk.type === 'safe' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i></div>
+      <div class="bunk-text">${bunk.type === 'safe' ? 'Safe to Bunk' : 'Must Attend'}</div>
+      <div class="bunk-value">${bunk.value}</div>
+      <div class="progress-label">classes</div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-chart-bar"></i> Quick Stats</div>
+    <div class="stat-row">
+      <div class="stat-card success"><div class="stat-value">${stats.present}</div><div class="stat-label">Present</div></div>
+      <div class="stat-card danger"><div class="stat-value">${stats.absent}</div><div class="stat-label">Absent</div></div>
+      <div class="stat-card neutral"><div class="stat-value">${stats.cancelled}</div><div class="stat-label">Cancelled</div></div>
+    </div>
+  `;
+    }
+
+    function renderLogger() {
+      const today = new Date();
+      const dateStr = formatDate(today);
+      const dayName = DAYS[today.getDay()];
+      const schedule = getDaySchedule(dateStr);
+      const log = state.logs[dateStr] || {};
+
+      let html = `<h2 class="section-title"><i class="fas fa-calendar-day"></i> ${dayName}, ${MONTHS[today.getMonth()]} ${today.getDate()}</h2>`;
+
+      if (isBeforeSemester(dateStr)) {
+        html += `<div class="weekend-msg"><div class="weekend-icon"><i class="fas fa-hourglass-start"></i></div><div class="weekend-title">Semester Not Started</div><div class="weekend-subtitle">Classes begin on January 5, 2026</div></div>`;
+      } else if (!schedule) {
+        html += `<div class="weekend-msg"><div class="weekend-icon"><i class="fas fa-umbrella-beach"></i></div><div class="weekend-title">No Classes Today</div><div class="weekend-subtitle">Enjoy your ${dayName}!</div></div>`;
+      } else {
+        for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+          const subjectCode = schedule[period];
+          const slot = TIME_SLOTS[period];
+          const subject = subjectCode ? SUBJECTS[subjectCode] : null;
+          const status = log[period] || null;
+
+          if (!subject) {
+            html += `<div class="period-card no-class">
+          <div class="period-header">
+            <div class="period-info"><h3>${slot.label}</h3><p>No class scheduled</p></div>
+            <div class="period-time">${slot.start} - ${slot.end}</div>
+          </div>
+          <span class="no-class-badge">No Class</span>
+        </div>`;
+          } else {
+            html += `<div class="period-card" style="border-left-color: ${subject.color}">
+          <div class="period-header">
+            <div class="period-info"><h3>${subjectCode}</h3><p>${subject.name}</p></div>
+            <div class="period-time">${slot.start} - ${slot.end}</div>
+          </div>
+          <div class="status-btns">
+            <button class="status-btn present ${status === 'present' ? 'active' : ''}" onclick="setStatus('${dateStr}','${period}','present')">Present</button>
+            <button class="status-btn absent ${status === 'absent' ? 'active' : ''}" onclick="setStatus('${dateStr}','${period}','absent')">Absent</button>
+            <button class="status-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="setStatus('${dateStr}','${period}','cancelled')">Cancelled</button>
+          </div>
+        </div>`;
+          }
+        }
+        if (dayName === "Friday") {
+          html += `<div class="cia-toggle">
+        <span class="cia-label">CIA Seminar (P4-P5)</span>
+        <div class="toggle-switch ${state.settings.ciaSeminarEnabled ? 'active' : ''}" onclick="toggleCIA()"></div>
+      </div>`;
+        }
+      }
+      document.getElementById("loggerView").innerHTML = html;
+    }
+
+    function setStatus(dateStr, period, status) {
+      if (isBeforeSemester(dateStr)) return;
+      if (!state.logs[dateStr]) state.logs[dateStr] = {};
+      state.logs[dateStr][period] = state.logs[dateStr][period] === status ? null : status;
+      state.lastLoggedDate = dateStr;
+      saveState();
+      renderLogger();
+      renderDashboard();
+    }
+
+    function toggleCIA() {
+      state.settings.ciaSeminarEnabled = !state.settings.ciaSeminarEnabled;
+      saveState();
+      renderLogger();
+    }
+
+    function renderCalendar() {
+      const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+      const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayStr = formatDate(today);
+
+      let html = `
+    <div class="calendar-header">
+      <button class="calendar-nav" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+      <span class="calendar-month">${MONTHS[calendarMonth]} ${calendarYear}</span>
+      <button class="calendar-nav" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="calendar-grid">
+      ${["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(d => `<div class="calendar-day-label">${d}</div>`).join('')}
+  `;
+
+      for (let i = 0; i < firstDay; i++) html += `<div class="calendar-day empty"></div>`;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const d = new Date(dateStr + "T00:00:00");
+        const isToday = dateStr === todayStr;
+        const isFuture = d > today;
+        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+        const isSelected = dateStr === selectedCalendarDate;
+        const isPreSemester = isBeforeSemester(dateStr);
+        const event = CALENDAR_EVENTS[dateStr];
+        const schedule = getDaySchedule(dateStr);
+        const log = state.logs[dateStr];
+
+        let dotClass = "";
+        if (!isFuture && !isPreSemester && schedule && log) {
+          let p = 0, a = 0;
+          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+            if (schedule[period]) {
+              if (log[period] === "present") p++;
+              else if (log[period] === "absent") a++;
+            }
+          }
+          if (p + a > 0) {
+            if (a === 0) dotClass = "green";
+            else if (p === 0) dotClass = "red";
+            else dotClass = "yellow";
+          }
+        }
+
+        let eventClass = "";
+        let eventBadge = "";
+        if (event) {
+          if (event.status === "holiday") { eventClass = "holiday"; eventBadge = '<span class="event-badge holiday"></span>'; }
+          else if (event.status === "noclass") { eventClass = "no-class-day"; eventBadge = '<span class="event-badge noclass"></span>'; }
+          else if (event.status === "special") { eventClass = "event-day"; eventBadge = '<span class="event-badge special"></span>'; }
+        }
+
+        html += `<div class="calendar-day ${isToday ? 'today' : ''} ${isFuture ? 'future' : ''} ${isWeekend && !event ? 'weekend' : ''} ${isSelected ? 'selected' : ''} ${isPreSemester ? 'pre-semester' : ''} ${eventClass}" onclick="selectDate('${dateStr}')">
+      ${day}${eventBadge}${dotClass ? `<span class="day-dot ${dotClass}"></span>` : ''}
+    </div>`;
+      }
+
+      html += `</div>`;
+
+      if (selectedCalendarDate) {
+        const selDate = new Date(selectedCalendarDate + "T00:00:00");
+        const selEvent = CALENDAR_EVENTS[selectedCalendarDate];
+        const selSchedule = getDaySchedule(selectedCalendarDate);
+        const selLog = state.logs[selectedCalendarDate] || {};
+
+        html += `<div class="day-details"><div class="day-details-header">${DAYS[selDate.getDay()]}, ${MONTHS[selDate.getMonth()]} ${selDate.getDate()}</div>`;
+
+        if (selEvent) {
+          html += `<div class="event-info">
+        <div class="event-title">${selEvent.title}</div>
+        <span class="event-status ${selEvent.status}">${selEvent.label}</span>
+      </div>`;
+        }
+
+        if (isBeforeSemester(selectedCalendarDate)) {
+          html += `<p style="color:var(--text-secondary)">Before semester start</p>`;
+        } else if (!selSchedule) {
+          html += `<p style="color:var(--text-secondary)">No classes</p>`;
+        } else {
+          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+            const subjectCode = selSchedule[period];
+            const subject = subjectCode ? SUBJECTS[subjectCode] : null;
+            const status = selLog[period];
+            let icon = '<i class="fas fa-minus" style="color:var(--text-muted)"></i>';
+            if (status === "present") icon = '<i class="fas fa-check-circle" style="color:var(--success)"></i>';
+            else if (status === "absent") icon = '<i class="fas fa-times-circle" style="color:var(--danger)"></i>';
+            else if (status === "cancelled") icon = '<i class="fas fa-minus-circle" style="color:var(--neutral)"></i>';
+            html += `<div class="day-detail-row">
+          <span class="day-detail-period">${period}</span>
+          <span class="day-detail-subject">${subject ? subject.name : 'No class'}</span>
+          <span class="day-detail-status">${icon}</span>
+        </div>`;
+          }
+        }
+        html += `</div>`;
+      }
+
+      document.getElementById("calendarView").innerHTML = html;
+    }
+
+    function changeMonth(delta) {
+      calendarMonth += delta;
+      if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+      if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+      selectedCalendarDate = null;
+      renderCalendar();
+    }
+
+    function selectDate(dateStr) {
+      const d = new Date(dateStr + "T00:00:00");
+      if (d > new Date()) return;
+      if (isBeforeSemester(dateStr) && !CALENDAR_EVENTS[dateStr]) return;
+      selectedCalendarDate = selectedCalendarDate === dateStr ? null : dateStr;
+      renderCalendar();
+    }
+
+    function renderSyllabus() {
+      let html = `<div class="section-title"><i class="fas fa-book-open"></i> Course Syllabus</div>`;
+
+      for (const code in SYLLABUS) {
+        const subj = SYLLABUS[code];
+        const isExpanded = expandedSubjects[code];
+
+        html += `<div class="syllabus-subject">
+      <div class="syllabus-header" onclick="toggleSubject('${code}')">
+        <div>
+          <div class="syllabus-title">${subj.name}</div>
+          <div class="syllabus-meta">${subj.code}</div>
+        </div>
+        <span class="credit-badge">${subj.credits} Credits</span>
+      </div>
+      <div class="syllabus-content ${isExpanded ? 'active' : ''}">`;
+
+        for (const section of subj.sections) {
+          html += `<div class="section-divider">${section.title}</div>`;
+          for (const unit of section.units) {
+            html += `<div class="syllabus-unit">
+          <div class="unit-header">${unit.name}${unit.priority > 0 ? `<span class="priority-badge">+${unit.priority}</span>` : ''}</div>
+          <div class="unit-topics">${unit.content.replace(/\n/g, '<br>')}</div>
+        </div>`;
+          }
+        }
+
+        html += `</div></div>`;
+      }
+
+      document.getElementById("syllabusView").innerHTML = html;
+    }
+
+    function toggleSubject(code) {
+      expandedSubjects[code] = !expandedSubjects[code];
+      renderSyllabus();
+    }
+
+    function renderSettings() {
+      document.getElementById("settingsView").innerHTML = `
+    <div class="section-title"><i class="fas fa-sliders-h"></i> Settings</div>
+    <div class="card">
+      <div class="settings-item">
+        <div class="settings-info"><h3>Target Percentage</h3><p>Minimum attendance goal</p></div>
+        <div class="slider-container">
+          <input type="range" class="slider" min="50" max="100" value="${state.settings.targetPercentage}" onchange="updateTarget(this.value)" oninput="document.getElementById('targetVal').textContent=this.value+'%'">
+          <span class="slider-value" id="targetVal">${state.settings.targetPercentage}%</span>
+        </div>
+      </div>
+      <div class="settings-item">
+        <div class="settings-info"><h3>Daily Reminder</h3><p>Get notified at 2:00 PM</p></div>
+        <div class="toggle-switch ${state.settings.notificationsEnabled ? 'active' : ''}" onclick="toggleNotifications()"></div>
+      </div>
+      <div class="settings-item">
+        <div class="settings-info"><h3>Export Data</h3><p>Download logs as JSON</p></div>
+        <button class="settings-btn" onclick="exportData()"><i class="fas fa-download"></i></button>
+      </div>
+      <div class="settings-item">
+        <div class="settings-info"><h3>Reset All Data</h3><p>Delete all logs and settings</p></div>
+        <button class="settings-btn danger" onclick="showResetModal()"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--text-muted);font-size:0.75rem;margin-top:24px">Roll No. 187 • Room 6 • Made with <i class="fas fa-heart" style="color:var(--danger)"></i></p>
+  `;
+    }
+
+    function updateTarget(val) {
+      state.settings.targetPercentage = parseInt(val);
+      saveState();
+      renderDashboard();
+    }
+
+    function toggleNotifications() {
+      if (!state.settings.notificationsEnabled && "Notification" in window) {
+        Notification.requestPermission().then(p => {
+          state.settings.notificationsEnabled = p === "granted";
+          saveState();
+          renderSettings();
+        });
+      } else {
+        state.settings.notificationsEnabled = !state.settings.notificationsEnabled;
+        saveState();
+        renderSettings();
+      }
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `nexus_tracker_${formatDate(new Date())}.json`;
+      a.click();
+    }
+
+    function showResetModal() { document.getElementById("resetModal").classList.add("active"); }
+    function closeModal() { document.getElementById("resetModal").classList.remove("active"); }
+    function confirmReset() {
+      localStorage.removeItem(STORAGE_KEY);
+      state = loadState();
+      closeModal();
+      renderAll();
+    }
+
+    function showView(view) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById(view + 'View').classList.add('active');
+      document.querySelector(`[data-view="${view}"]`).classList.add('active');
+
+      if (view === 'dashboard') renderDashboard();
+      else if (view === 'logger') renderLogger();
+      else if (view === 'calendar') renderCalendar();
+      else if (view === 'syllabus') renderSyllabus();
+      else if (view === 'settings') renderSettings();
+    }
+
+    function renderAll() {
+      renderDashboard();
+      renderLogger();
+      renderCalendar();
+      renderSyllabus();
+      renderSettings();
+    }
+
+    function checkNotification() {
+      if (!state.settings.notificationsEnabled) return;
+      const now = new Date();
+      const day = now.getDay();
+      const hour = now.getHours();
+      if (day >= 1 && day <= 5 && hour >= 14) {
+        const today = formatDate(now);
+        if (state.lastLoggedDate !== today && "Notification" in window) {
+          new Notification("Nexus", { body: "Don't forget to log your attendance for today!", icon: "Code_Generated_Image.png" });
+        }
+      }
+    }
+
+    // Init
+    document.getElementById("headerDate").textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    document.querySelectorAll('.bottom-nav button').forEach(btn => {
+      btn.addEventListener('click', () => showView(btn.dataset.view));
+    });
+    renderAll();
+    setInterval(checkNotification, 5 * 60 * 1000);
+  </script>
+</body>
+
+</html>
