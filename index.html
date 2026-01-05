@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Nexus - Attendance Tracker</title>
   <meta name="description" content="Nexus - Attendance Tracker for Roll Number 187, Room 6">
-  <meta name="theme-color" content="#0D0D0D">
+  <meta name="theme-color" content="#1a1a1a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Nexus">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="Code_Generated_Image.png">
+  <link rel="apple-touch-icon" href="nexus-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -1447,7 +1447,7 @@
 <body>
   <header>
     <div class="header-left">
-      <img src="Code_Generated_Image.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <img src="nexus-logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
       <span class="app-title">Nexus</span>
     </div>
     <span class="header-date" id="headerDate"></span>
@@ -2324,7 +2324,7 @@
       if (day >= 1 && day <= 5 && hour >= 14) {
         const today = formatDate(now);
         if (state.lastLoggedDate !== today && "Notification" in window) {
-          new Notification("Nexus", { body: "Don't forget to log your attendance for today!", icon: "Code_Generated_Image.png" });
+          new Notification("Nexus", { body: "Don't forget to log your attendance for today!", icon: "nexus-logo.png" });
         }
       }
     }

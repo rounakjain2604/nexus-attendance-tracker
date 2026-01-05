@@ -1,8 +1,8 @@
-const CACHE_NAME = 'nexus-v2';
+const CACHE_NAME = 'nexus-v3';
 const ASSETS = [
     './',
     './index.html',
-    './Code_Generated_Image.png',
+    './nexus-logo.png',
     './manifest.json',
     'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'
