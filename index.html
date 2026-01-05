@@ -13,7 +13,10 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="nexus-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
@@ -52,7 +55,7 @@
     }
 
     body {
-      font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
@@ -89,8 +92,9 @@
     }
 
     .app-title {
+      font-family: 'Playfair Display', Georgia, serif;
       font-weight: 700;
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       color: var(--accent-primary);
     }
 
@@ -317,12 +321,14 @@
     }
 
     .section-title {
-      font-size: 1.125rem;
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 16px;
       display: flex;
       align-items: center;
       gap: 8px;
+      color: var(--text-primary);
     }
 
     .period-card {
@@ -1251,7 +1257,8 @@
 
     .quick-log-subject {
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
+      line-height: 1.3;
     }
 
     .quick-log-time {
@@ -1448,6 +1455,23 @@
     .haptic {
       -webkit-tap-highlight-color: transparent;
     }
+
+    /* Subject Icon Wrapper */
+    .subject-icon-wrapper {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+      opacity: 0.9;
+    }
+
+    /* Quick Log Icon */
+    .quick-log-icon {
+      font-size: 1.25rem;
+      width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 
@@ -1499,12 +1523,12 @@
     };
 
     const SUBJECTS = {
-      AUDA: { name: "Audit & Assurance", color: "#7C4DFF" },
-      IDTX: { name: "Indirect Tax Laws", color: "#00BFA5" },
-      ETCG: { name: "Ethics & Corp. Governance", color: "#FF6D00" },
-      FRFS: { name: "Financial Reporting", color: "#448AFF" },
-      INBA: { name: "International Business", color: "#E91E63" },
-      CIA: { name: "CIA Seminar", color: "#9C27B0" }
+      AUDA: { name: "Audit & Assurance", color: "#7C4DFF", icon: "fa-clipboard-check" },
+      IDTX: { name: "Indirect Tax Laws", color: "#00BFA5", icon: "fa-receipt" },
+      ETCG: { name: "Ethics & Corp. Governance", color: "#FF6D00", icon: "fa-balance-scale" },
+      FRFS: { name: "Financial Reporting", color: "#448AFF", icon: "fa-chart-line" },
+      INBA: { name: "International Business", color: "#E91E63", icon: "fa-globe" },
+      CIA: { name: "CIA Seminar", color: "#9C27B0", icon: "fa-users" }
     };
 
     const SCHEDULE = {
@@ -1791,12 +1815,7 @@
     }
 
     function renderDashboard() {
-      const stats = calculateStats();
-      const bunk = calculateBunk(stats);
       const subjectStats = calculateSubjectStats();
-      const circumference = 2 * Math.PI * 88;
-      const offset = circumference - (stats.percent / 100) * circumference;
-
       const today = new Date();
       const dateStr = formatDate(today);
       const dayName = DAYS[today.getDay()];
@@ -1804,58 +1823,23 @@
       const log = state.logs[dateStr] || {};
 
       let html = `
-    <div class="card progress-container">
-      <div class="progress-ring">
-        <svg width="200" height="200">
-          <circle class="bg" cx="100" cy="100" r="88"></circle>
-          <circle class="fg" cx="100" cy="100" r="88" 
-            stroke-dasharray="${circumference}" 
-            stroke-dashoffset="${offset}"></circle>
-        </svg>
-        <div class="progress-text">
-          <div class="progress-percent">${stats.percent.toFixed(1)}%</div>
-          <div class="progress-label">Your Attendance</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card target-card">
-      <div class="target-left">
-        <i class="fas fa-bullseye target-icon"></i>
-        <span class="target-label">Target:</span>
-        <span class="target-value">${state.settings.targetPercentage}%</span>
-      </div>
-      <button class="target-edit" onclick="showView('settings')">Edit</button>
-    </div>
-
-    <div class="card bunk-card ${bunk.type}">
-      <div class="bunk-icon ${bunk.type}"><i class="fas ${bunk.type === 'safe' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i></div>
-      <div class="bunk-text">${bunk.type === 'safe' ? 'Safe to Bunk' : 'Must Attend'}</div>
-      <div class="bunk-value">${bunk.value}</div>
-      <div class="progress-label">classes</div>
-    </div>
-
-    <div class="section-title"><i class="fas fa-chart-bar"></i> Quick Stats</div>
-    <div class="stat-row">
-      <div class="stat-card success"><div class="stat-value">${stats.present}</div><div class="stat-label">Present</div></div>
-      <div class="stat-card danger"><div class="stat-value">${stats.absent}</div><div class="stat-label">Absent</div></div>
-      <div class="stat-card neutral"><div class="stat-value">${stats.cancelled}</div><div class="stat-label">Cancelled</div></div>
-    </div>
-
     <div class="section-title"><i class="fas fa-graduation-cap"></i> Subject-wise Attendance</div>
     <div class="subject-ring-grid">`;
 
-      // Add subject ring cards with per-subject bunk calculations
+      // Add subject ring cards with icons and per-subject bunk calculations
       for (const code in subjectStats) {
         const s = subjectStats[code];
         const subject = SUBJECTS[code];
         const bunkInfo = calculateSubjectBunk(code, subjectStats);
-        const ringColor = s.percent >= state.settings.targetPercentage ? 'var(--success)' :
+        const ringColor = s.percent >= state.settings.targetPercentage ? subject.color :
           s.percent >= 60 ? 'var(--warning)' : 'var(--danger)';
         const cardClass = s.percent < 60 ? 'danger' : (s.percent < state.settings.targetPercentage ? 'warning' : '');
 
         html += `
-      <div class="subject-ring-card ${cardClass}">
+      <div class="subject-ring-card ${cardClass}" style="border-left: 4px solid ${subject.color}">
+        <div class="subject-icon-wrapper" style="color: ${subject.color}">
+          <i class="fas ${subject.icon}"></i>
+        </div>
         ${renderSubjectRing(s.percent, ringColor)}
         <div class="subject-ring-info">
           <div class="subject-ring-code">${code}</div>
@@ -1886,8 +1870,11 @@
           if (subject) {
             html += `
       <div class="quick-log-period" style="border-left-color: ${subject.color}">
+        <div class="quick-log-icon" style="color: ${subject.color}">
+          <i class="fas ${subject.icon}"></i>
+        </div>
         <div class="quick-log-info">
-          <div class="quick-log-subject">${subjectCode}</div>
+          <div class="quick-log-subject">${subject.name}</div>
           <div class="quick-log-time">${slot.start} - ${slot.end}</div>
         </div>
         <div class="quick-log-btns">
