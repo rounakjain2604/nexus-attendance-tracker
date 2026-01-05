@@ -1602,6 +1602,46 @@
       background: rgba(224, 87, 87, 0.1);
       color: var(--danger);
     }
+
+    .update-toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      padding: 12px 24px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    .update-toast button {
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translate(-50%, 20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+    }
   </style>
 </head>
 
@@ -2541,6 +2581,41 @@
         }
       }
     }, { passive: true });
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(registration => {
+          console.log('SW registered:', registration);
+
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                showUpdateToast();
+              }
+            });
+          });
+        }).catch(err => console.log('SW registration failed:', err));
+      });
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+    }
+
+    function showUpdateToast() {
+      if (document.querySelector('.update-toast')) return;
+      const toast = document.createElement('div');
+      toast.className = 'update-toast';
+      toast.innerHTML = `
+        <span>New version available!</span>
+        <button onclick="window.location.reload()">Refresh</button>
+      `;
+      document.body.appendChild(toast);
+    }
   </script>
 </body>
 
