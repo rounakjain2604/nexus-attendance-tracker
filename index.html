@@ -17,21 +17,24 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
-      --bg-primary: #0D0D0D;
-      --bg-secondary: #1A1A1A;
-      --bg-tertiary: #252525;
-      --text-primary: #F5F5F5;
-      --text-secondary: #A3A3A3;
-      --text-muted: #6B6B6B;
-      --accent-primary: #2962FF;
-      --accent-glow: rgba(41, 98, 255, 0.15);
-      --success: #00C853;
-      --danger: #FF5252;
-      --warning: #FFD600;
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #232323;
+      --bg-tertiary: #2d2d2d;
+      --bg-elevated: #383838;
+      --text-primary: #ececec;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666666;
+      --accent-primary: #d97757;
+      --accent-secondary: #7c9eb3;
+      --accent-glow: rgba(217, 119, 87, 0.15);
+      --success: #5bb98c;
+      --danger: #e57373;
+      --warning: #f0b866;
       --neutral: #757575;
-      --event-holiday: #FF5252;
-      --event-noclass: #FF9800;
-      --event-special: #9C27B0;
+      --event-holiday: #e57373;
+      --event-noclass: #f0b866;
+      --event-special: #9a8c7d;
+      --border-subtle: rgba(255, 255, 255, 0.06);
     }
 
     *,
@@ -85,9 +88,7 @@
     .app-title {
       font-weight: 700;
       font-size: 1.25rem;
-      background: linear-gradient(135deg, #2962FF, #00BFA5);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--accent-primary);
     }
 
     .header-date {
@@ -128,12 +129,12 @@
       border-radius: 16px;
       padding: 20px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border-subtle);
       transition: all 0.2s ease;
     }
 
     .card:hover {
-      transform: scale(1.01);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .progress-container {
@@ -856,18 +857,15 @@
     /* ═══════════════════════════════════════════════════════════════ */
 
     .syllabus-subject {
-      background: linear-gradient(145deg, rgba(26, 26, 26, 0.9), rgba(37, 37, 37, 0.7));
-      border-radius: 16px;
-      margin-bottom: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      margin-bottom: 12px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
     }
 
     .syllabus-subject:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
       border-color: rgba(255, 255, 255, 0.1);
     }
 
@@ -876,26 +874,14 @@
       grid-template-columns: 1fr auto;
       align-items: center;
       gap: 16px;
-      padding: 18px 20px;
+      padding: 16px;
       cursor: pointer;
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .syllabus-header::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: linear-gradient(180deg, var(--accent-primary), #00BFA5);
-      border-radius: 0 4px 4px 0;
-      opacity: 0.8;
+      border-left: 3px solid var(--accent-primary);
+      transition: all 0.2s ease;
     }
 
     .syllabus-header:hover {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .syllabus-header-info {
@@ -933,15 +919,14 @@
     }
 
     .credit-badge {
-      background: linear-gradient(135deg, var(--accent-primary), #1E88E5);
+      background: var(--accent-primary);
       color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
+      padding: 5px 12px;
+      border-radius: 16px;
       font-size: 0.7rem;
       font-weight: 600;
       letter-spacing: 0.3px;
       white-space: nowrap;
-      box-shadow: 0 4px 15px rgba(41, 98, 255, 0.25);
     }
 
     .syllabus-content {
@@ -1326,7 +1311,7 @@
 
     /* Install App Button */
     .install-btn {
-      background: linear-gradient(135deg, var(--accent-primary), #00BFA5);
+      background: var(--accent-primary);
       color: white;
       border: none;
       padding: 12px 24px;
@@ -1341,14 +1326,122 @@
     }
 
     .install-btn:hover {
-      transform: scale(1.02);
-      box-shadow: 0 4px 20px rgba(41, 98, 255, 0.3);
+      opacity: 0.9;
     }
 
     .install-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
+    }
+
+    /* Subject Ring Cards */
+    .subject-ring-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .subject-ring-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .subject-ring-card:hover {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .subject-ring-card.warning {
+      border-color: var(--warning);
+      background: rgba(240, 184, 102, 0.05);
+    }
+
+    .subject-ring-card.danger {
+      border-color: var(--danger);
+      background: rgba(229, 115, 115, 0.05);
+    }
+
+    .subject-ring-wrapper {
+      position: relative;
+      width: 64px;
+      height: 64px;
+    }
+
+    .subject-ring-wrapper svg {
+      transform: rotate(-90deg);
+    }
+
+    .subject-ring-wrapper circle {
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+    }
+
+    .subject-ring-wrapper .ring-bg {
+      stroke: var(--bg-tertiary);
+    }
+
+    .subject-ring-wrapper .ring-fg {
+      transition: stroke-dashoffset 0.6s ease;
+    }
+
+    .subject-ring-percent {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .subject-ring-info {
+      text-align: center;
+    }
+
+    .subject-ring-code {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .subject-ring-name {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100px;
+    }
+
+    .subject-bunk-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .subject-bunk-badge.safe {
+      background: rgba(91, 185, 140, 0.15);
+      color: var(--success);
+    }
+
+    .subject-bunk-badge.danger {
+      background: rgba(229, 115, 115, 0.15);
+      color: var(--danger);
+    }
+
+    /* Haptic button styles */
+    .haptic {
+      -webkit-tap-highlight-color: transparent;
     }
   </style>
 </head>
@@ -1658,6 +1751,40 @@
       return subjectStats;
     }
 
+    function calculateSubjectBunk(subjectCode, subjectStats) {
+      const s = subjectStats[subjectCode];
+      const target = state.settings.targetPercentage;
+      if (s.total === 0) return { type: "safe", value: 0 };
+      if (s.percent >= target) {
+        const safe = Math.floor((s.present * 100 - target * s.total) / target);
+        return { type: "safe", value: Math.max(0, safe) };
+      } else {
+        const must = Math.ceil((target * s.total - s.present * 100) / (100 - target));
+        return { type: "danger", value: Math.max(0, must) };
+      }
+    }
+
+    function hapticFeedback(duration = 10) {
+      if ('vibrate' in navigator) {
+        navigator.vibrate(duration);
+      }
+    }
+
+    function renderSubjectRing(percent, color, size = 64) {
+      const radius = (size - 10) / 2;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference - (Math.min(100, percent) / 100) * circumference;
+      return `
+        <div class="subject-ring-wrapper" style="width:${size}px;height:${size}px">
+          <svg width="${size}" height="${size}">
+            <circle class="ring-bg" cx="${size / 2}" cy="${size / 2}" r="${radius}"></circle>
+            <circle class="ring-fg" cx="${size / 2}" cy="${size / 2}" r="${radius}" 
+              stroke="${color}" stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+          </svg>
+          <span class="subject-ring-percent" style="color:${color}">${percent.toFixed(0)}%</span>
+        </div>`;
+    }
+
     function renderDashboard() {
       const stats = calculateStats();
       const bunk = calculateBunk(stats);
@@ -1711,29 +1838,26 @@
     </div>
 
     <div class="section-title"><i class="fas fa-graduation-cap"></i> Subject-wise Attendance</div>
-    <div class="subject-grid">`;
+    <div class="subject-ring-grid">`;
 
-      // Add subject cards
+      // Add subject ring cards with per-subject bunk calculations
       for (const code in subjectStats) {
         const s = subjectStats[code];
         const subject = SUBJECTS[code];
-        const percentColor = s.percent >= state.settings.targetPercentage ? 'var(--success)' :
+        const bunkInfo = calculateSubjectBunk(code, subjectStats);
+        const ringColor = s.percent >= state.settings.targetPercentage ? 'var(--success)' :
           s.percent >= 60 ? 'var(--warning)' : 'var(--danger)';
+        const cardClass = s.percent < 60 ? 'danger' : (s.percent < state.settings.targetPercentage ? 'warning' : '');
 
         html += `
-      <div class="subject-card" style="border-left-color: ${subject.color}">
-        <div class="subject-card-header">
-          <span class="subject-code">${code}</span>
-          <span class="subject-percent" style="color: ${percentColor}">${s.percent.toFixed(0)}%</span>
-        </div>
-        <div class="subject-name">${subject.name}</div>
-        <div class="subject-progress-bar">
-          <div class="subject-progress-fill" style="width: ${s.percent}%; background: ${subject.color}"></div>
-        </div>
-        <div class="subject-stats">
-          <span>P: ${s.present}</span>
-          <span>A: ${s.absent}</span>
-          <span>C: ${s.cancelled}</span>
+      <div class="subject-ring-card ${cardClass}">
+        ${renderSubjectRing(s.percent, ringColor)}
+        <div class="subject-ring-info">
+          <div class="subject-ring-code">${code}</div>
+          <div class="subject-ring-name">${subject.name}</div>
+          <span class="subject-bunk-badge ${bunkInfo.type}">
+            ${bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Attend ${bunkInfo.value}`}
+          </span>
         </div>
       </div>`;
       }
@@ -1776,6 +1900,7 @@
     }
 
     function quickLog(dateStr, period, status) {
+      hapticFeedback();
       if (isBeforeSemester(dateStr)) return;
       if (!state.logs[dateStr]) state.logs[dateStr] = {};
       state.logs[dateStr][period] = state.logs[dateStr][period] === status ? null : status;
@@ -1839,6 +1964,7 @@
     }
 
     function setStatus(dateStr, period, status) {
+      hapticFeedback();
       if (isBeforeSemester(dateStr)) return;
       if (!state.logs[dateStr]) state.logs[dateStr] = {};
       state.logs[dateStr][period] = state.logs[dateStr][period] === status ? null : status;
@@ -1849,6 +1975,7 @@
     }
 
     function toggleCIA() {
+      hapticFeedback();
       state.settings.ciaSeminarEnabled = !state.settings.ciaSeminarEnabled;
       saveState();
       renderLogger();
@@ -1939,21 +2066,36 @@
             const subjectCode = selSchedule[period];
             const subject = subjectCode ? SUBJECTS[subjectCode] : null;
             const status = selLog[period];
-            let icon = '<i class="fas fa-minus" style="color:var(--text-muted)"></i>';
-            if (status === "present") icon = '<i class="fas fa-check-circle" style="color:var(--success)"></i>';
-            else if (status === "absent") icon = '<i class="fas fa-times-circle" style="color:var(--danger)"></i>';
-            else if (status === "cancelled") icon = '<i class="fas fa-minus-circle" style="color:var(--neutral)"></i>';
-            html += `<div class="day-detail-row">
-          <span class="day-detail-period">${period}</span>
-          <span class="day-detail-subject">${subject ? subject.name : 'No class'}</span>
-          <span class="day-detail-status">${icon}</span>
-        </div>`;
+
+            if (subject) {
+              html += `<div class="period-card" style="border-left-color: ${subject.color}; margin-bottom: 8px; padding: 12px;">
+            <div class="period-header" style="margin-bottom: 8px;">
+              <div class="period-info"><h3>${subjectCode}</h3><p>${subject.name}</p></div>
+              <div class="period-time">${TIME_SLOTS[period].start} - ${TIME_SLOTS[period].end}</div>
+            </div>
+            <div class="status-btns">
+              <button class="status-btn present ${status === 'present' ? 'active' : ''}" onclick="setCalendarStatus('${selectedCalendarDate}','${period}','present')">Present</button>
+              <button class="status-btn absent ${status === 'absent' ? 'active' : ''}" onclick="setCalendarStatus('${selectedCalendarDate}','${period}','absent')">Absent</button>
+              <button class="status-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="setCalendarStatus('${selectedCalendarDate}','${period}','cancelled')">Cancelled</button>
+            </div>
+          </div>`;
+            }
           }
         }
         html += `</div>`;
       }
 
       document.getElementById("calendarView").innerHTML = html;
+    }
+
+    function setCalendarStatus(dateStr, period, status) {
+      hapticFeedback();
+      if (isBeforeSemester(dateStr)) return;
+      if (!state.logs[dateStr]) state.logs[dateStr] = {};
+      state.logs[dateStr][period] = state.logs[dateStr][period] === status ? null : status;
+      saveState();
+      renderCalendar();
+      renderDashboard();
     }
 
     function changeMonth(delta) {
@@ -2219,10 +2361,46 @@
 
     document.getElementById("headerDate").textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     document.querySelectorAll('.bottom-nav button').forEach(btn => {
-      btn.addEventListener('click', () => showView(btn.dataset.view));
+      btn.addEventListener('click', () => {
+        hapticFeedback();
+        showView(btn.dataset.view);
+      });
     });
     renderAll();
     setInterval(checkNotification, 5 * 60 * 1000);
+
+    // Swipe Gesture Support
+    const TABS = ['dashboard', 'logger', 'calendar', 'syllabus', 'settings'];
+    let currentTabIndex = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+
+      // Only trigger swipe if horizontal movement > 50px and vertical < 30px
+      if (Math.abs(deltaX) > 50 && deltaY < 30) {
+        hapticFeedback();
+
+        // Get current active tab
+        const activeBtn = document.querySelector('.bottom-nav button.active');
+        currentTabIndex = TABS.indexOf(activeBtn.dataset.view);
+
+        if (deltaX > 0 && currentTabIndex > 0) {
+          // Swipe right - go to previous tab
+          showView(TABS[currentTabIndex - 1]);
+        } else if (deltaX < 0 && currentTabIndex < TABS.length - 1) {
+          // Swipe left - go to next tab
+          showView(TABS[currentTabIndex + 1]);
+        }
+      }
+    }, { passive: true });
   </script>
 </body>
 
