@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
@@ -55,7 +55,7 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
       min-height: 100vh;
@@ -1523,12 +1523,12 @@
     };
 
     const SUBJECTS = {
-      AUDA: { name: "Audit & Assurance", color: "#7C4DFF", icon: "fa-clipboard-check" },
-      IDTX: { name: "Indirect Tax Laws", color: "#00BFA5", icon: "fa-receipt" },
-      ETCG: { name: "Ethics & Corp. Governance", color: "#FF6D00", icon: "fa-balance-scale" },
-      FRFS: { name: "Financial Reporting", color: "#448AFF", icon: "fa-chart-line" },
-      INBA: { name: "International Business", color: "#E91E63", icon: "fa-globe" },
-      CIA: { name: "CIA Seminar", color: "#9C27B0", icon: "fa-users" }
+      AUDA: { name: "Audit & Assurance", color: "#3D5A80", icon: "fa-clipboard-check" },     /* Slate Blue */
+      IDTX: { name: "Indirect Tax Laws", color: "#81B29A", icon: "fa-receipt" },               /* Sage Green */
+      ETCG: { name: "Ethics & Corp. Governance", color: "#E07A5F", icon: "fa-balance-scale" }, /* Terra Cotta */
+      FRFS: { name: "Financial Reporting", color: "#5F6C7B", icon: "fa-chart-line" },          /* Steel Blue */
+      INBA: { name: "International Business", color: "#E29578", icon: "fa-globe" },            /* Warm Peach */
+      CIA: { name: "CIA Seminar", color: "#9F86C0", icon: "fa-users" }                         /* Lavender */
     };
 
     const SCHEDULE = {
@@ -1818,21 +1818,33 @@
       const subjectStats = calculateSubjectStats();
       const today = new Date();
       const dateStr = formatDate(today);
-      const dayName = DAYS[today.getDay()];
       const schedule = getDaySchedule(dateStr);
       const log = state.logs[dateStr] || {};
 
+      // Get greeting based on time
+      const hour = today.getHours();
+      const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
       let html = `
-    <div class="section-title"><i class="fas fa-graduation-cap"></i> Subject-wise Attendance</div>
-    <div class="subject-ring-grid">`;
+      <div style="margin-bottom: 24px;">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text-primary); margin-bottom: 4px;">${greeting},</h1>
+        <p style="color: var(--text-secondary); font-size: 1rem;">Here's your attendance overview</p>
+      </div>
+
+      <div class="section-title" style="margin-top: 32px;"><i class="fas fa-graduation-cap"></i> Subject Performance</div>
+      <div class="subject-ring-grid">`;
 
       // Add subject ring cards with icons and per-subject bunk calculations
       for (const code in subjectStats) {
         const s = subjectStats[code];
         const subject = SUBJECTS[code];
         const bunkInfo = calculateSubjectBunk(code, subjectStats);
+
+        // Use theme color if safe (above target), else warning/danger
+        // We use the subject's own color for the ring if good standing, ensuring visual harmony
         const ringColor = s.percent >= state.settings.targetPercentage ? subject.color :
           s.percent >= 60 ? 'var(--warning)' : 'var(--danger)';
+
         const cardClass = s.percent < 60 ? 'danger' : (s.percent < state.settings.targetPercentage ? 'warning' : '');
 
         html += `
@@ -1853,8 +1865,9 @@
 
       html += `</div>
 
-    <div class="section-title"><i class="fas fa-calendar-check"></i> Today's Classes</div>
-    <div class="quick-log-section">`;
+    <div style="margin-top: 32px;">
+      <div class="section-title"><i class="fas fa-calendar-day"></i> Today's Schedule</div>
+      <div class="quick-log-section">`;
 
       if (isBeforeSemester(dateStr)) {
         html += `<div class="no-class-today"><i class="fas fa-hourglass-start"></i><div>Semester starts Jan 5, 2026</div></div>`;
@@ -1887,7 +1900,7 @@
         }
       }
 
-      html += `</div>`;
+      html += `</div></div>`;
       document.getElementById("dashboardView").innerHTML = html;
     }
 
