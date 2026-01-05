@@ -208,12 +208,13 @@ Replace simple progress bars with circular progress indicators:
 
 ## Next Steps
 
-1. [ ] Implement Edit Past Attendance feature
-2. [ ] Add haptic feedback to all buttons
-3. [ ] Implement swipe gestures for navigation
-4. [ ] Redesign subject cards with mini rings and warnings
+1. [x] Implement Edit Past Attendance feature
+2. [x] Add haptic feedback to all buttons
+3. [x] Implement swipe gestures for navigation
+4. [x] Redesign subject cards with mini rings and warnings
 5. [ ] Begin code modularization (start with CSS extraction)
 
 ---
 
 *Last Updated: January 5, 2026*
+
