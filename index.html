@@ -924,7 +924,7 @@
     }
 
     .syllabus-meta {
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       font-family: 'SF Mono', 'Fira Code', monospace;
       letter-spacing: 0.5px;
@@ -960,7 +960,7 @@
     .unit-header {
       font-weight: 700;
       color: var(--text-primary);
-      font-size: 0.9rem;
+      font-size: 1rem;
       margin-bottom: 12px;
       padding: 10px 14px;
       background: linear-gradient(135deg, rgba(41, 98, 255, 0.12), rgba(0, 191, 165, 0.08));
@@ -984,7 +984,7 @@
       color: #000;
       padding: 3px 10px;
       border-radius: 12px;
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.3px;
       box-shadow: 0 2px 8px rgba(255, 214, 0, 0.3);
@@ -1476,6 +1476,134 @@
       justify-content: center;
       flex-shrink: 0;
     }
+
+    /* Enhanced Quick Log Period with icon */
+    .quick-log-period {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 10px;
+      transition: transform 0.2s ease;
+    }
+
+    .quick-log-period:active {
+      transform: scale(0.98);
+    }
+
+    /* NEW LIST CARD STYLES */
+    .subject-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .subject-list-card {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      transition: all 0.2s ease;
+    }
+
+    .subject-list-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .sl-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .sl-content {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+      /* Text truncation fix */
+    }
+
+    .sl-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .sl-code {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+    }
+
+    .sl-name {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sl-progress-bg {
+      height: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 3px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .sl-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .sl-stats {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .sl-percent {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .sl-badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sl-badge.safe {
+      background: rgba(76, 175, 80, 0.1);
+      color: var(--success);
+    }
+
+    .sl-badge.danger {
+      background: rgba(224, 87, 87, 0.1);
+      color: var(--danger);
+    }
   </style>
 </head>
 
@@ -1832,37 +1960,41 @@
       let html = `
       <div style="margin-bottom: 24px;">
         <h1 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text-primary); margin-bottom: 4px;">${greeting},</h1>
-        <p style="color: var(--text-secondary); font-size: 1rem;">Here's your attendance overview</p>
+        <p style="color: var(--text-secondary); font-size: 1rem;">Here's your attendance status</p>
       </div>
 
-      <div class="section-title" style="margin-top: 32px;"><i class="fas fa-graduation-cap"></i> Subject Performance</div>
-      <div class="subject-ring-grid">`;
+      <div class="section-title" style="margin-top: 32px;"><i class="fas fa-chart-line"></i> Subject Overview</div>
+      <div class="subject-list-container">`;
 
-      // Add subject ring cards with icons and per-subject bunk calculations
+      // Add subject list cards
       for (const code in subjectStats) {
         const s = subjectStats[code];
         const subject = SUBJECTS[code];
         const bunkInfo = calculateSubjectBunk(code, subjectStats);
 
-        // Use theme color if safe (above target), else warning/danger
-        // We use the subject's own color for the ring if good standing, ensuring visual harmony
-        const ringColor = s.percent >= state.settings.targetPercentage ? subject.color :
-          s.percent >= 60 ? 'var(--warning)' : 'var(--danger)';
-
-        const cardClass = s.percent < 60 ? 'danger' : (s.percent < state.settings.targetPercentage ? 'warning' : '');
+        const isSafe = s.percent >= state.settings.targetPercentage;
+        // Use subject color for progress if safe, else warning/danger
+        const progressColor = isSafe ? subject.color : (s.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
+        const badgeClass = isSafe ? 'safe' : 'danger';
+        const badgeText = bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Attend ${bunkInfo.value}`;
 
         html += `
-      <div class="subject-ring-card ${cardClass}" style="border-left: 4px solid ${subject.color}">
-        <div class="subject-icon-wrapper" style="color: ${subject.color}">
+      <div class="subject-list-card" onclick="showView('syllabus'); toggleSubject('${code}')">
+        <div class="sl-icon" style="background: ${subject.color}; color: white;">
           <i class="fas ${subject.icon}"></i>
         </div>
-        ${renderSubjectRing(s.percent, ringColor)}
-        <div class="subject-ring-info">
-          <div class="subject-ring-code">${code}</div>
-          <div class="subject-ring-name">${subject.name}</div>
-          <span class="subject-bunk-badge ${bunkInfo.type}">
-            ${bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Attend ${bunkInfo.value}`}
-          </span>
+        <div class="sl-content">
+          <div class="sl-header">
+            <span class="sl-code">${code}</span>
+            <span class="sl-name">${subject.name}</span>
+          </div>
+          <div class="sl-progress-bg">
+            <div class="sl-progress-fill" style="width: ${s.percent}%; background: ${progressColor}"></div>
+          </div>
+        </div>
+        <div class="sl-stats">
+          <span class="sl-percent" style="color: ${progressColor}">${s.percent.toFixed(1)}%</span>
+          <span class="sl-badge ${badgeClass}">${badgeText}</span>
         </div>
       </div>`;
       }
@@ -1871,7 +2003,7 @@
 
     <div style="margin-top: 32px;">
       <div class="section-title"><i class="fas fa-calendar-day"></i> Today's Schedule</div>
-      <div class="quick-log-section">`;
+      <div class="subject-list-container">`;
 
       if (isBeforeSemester(dateStr)) {
         html += `<div class="no-class-today"><i class="fas fa-hourglass-start"></i><div>Semester starts Jan 5, 2026</div></div>`;
@@ -1886,18 +2018,18 @@
 
           if (subject) {
             html += `
-      <div class="quick-log-period" style="border-left-color: ${subject.color}">
-        <div class="quick-log-icon" style="color: ${subject.color}">
+      <div class="quick-log-period">
+        <div class="sl-icon" style="width: 40px; height: 40px; font-size: 1.2rem; background: ${subject.color}20; color: ${subject.color};">
           <i class="fas ${subject.icon}"></i>
         </div>
         <div class="quick-log-info">
-          <div class="quick-log-subject">${subject.name}</div>
-          <div class="quick-log-time">${slot.start} - ${slot.end}</div>
+          <div class="quick-log-subject" style="font-size: 1rem; margin-bottom: 2px;">${subject.name}</div>
+          <div class="quick-log-time">${slot.start} - ${slot.end} • ${subjectCode}</div>
         </div>
         <div class="quick-log-btns">
-          <button class="quick-btn present ${status === 'present' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','present')" title="Present"><i class="fas fa-check"></i></button>
-          <button class="quick-btn absent ${status === 'absent' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','absent')" title="Absent"><i class="fas fa-times"></i></button>
-          <button class="quick-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','cancelled')" title="Cancelled"><i class="fas fa-minus"></i></button>
+          <button class="quick-btn present ${status === 'present' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','present', event)" title="Present"><i class="fas fa-check"></i></button>
+          <button class="quick-btn absent ${status === 'absent' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','absent', event)" title="Absent"><i class="fas fa-times"></i></button>
+          <button class="quick-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','cancelled', event)" title="Cancelled"><i class="fas fa-minus"></i></button>
         </div>
       </div>`;
           }
@@ -1908,7 +2040,8 @@
       document.getElementById("dashboardView").innerHTML = html;
     }
 
-    function quickLog(dateStr, period, status) {
+    function quickLog(dateStr, period, status, event) {
+      if (event) event.stopPropagation();
       hapticFeedback();
       if (isBeforeSemester(dateStr)) return;
       if (!state.logs[dateStr]) state.logs[dateStr] = {};
