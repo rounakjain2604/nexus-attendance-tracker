@@ -1642,6 +1642,241 @@
         opacity: 1;
       }
     }
+
+    /* Leave Simulator Styles */
+    .simulator-card {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .simulator-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .simulator-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .simulator-title i {
+      color: var(--accent-primary);
+    }
+
+    .planned-leaves-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      min-height: 40px;
+    }
+
+    .leave-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(224, 122, 95, 0.15);
+      color: var(--accent-primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .leave-chip .remove-leave {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .leave-chip .remove-leave:hover {
+      opacity: 1;
+    }
+
+    .add-leave-section {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .date-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .date-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+    }
+
+    .add-leave-btn {
+      padding: 12px 20px;
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .add-leave-btn:hover {
+      opacity: 0.9;
+    }
+
+    .add-leave-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .simulation-results {
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
+    .result-value {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .result-value.positive {
+      color: var(--success);
+    }
+
+    .result-value.negative {
+      color: var(--danger);
+    }
+
+    .result-value.warning {
+      color: var(--warning);
+    }
+
+    .quick-add-btns {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .quick-add-btn {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .quick-add-btn:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .clear-all-btn {
+      background: rgba(224, 87, 87, 0.1);
+      color: var(--danger);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .clear-all-btn:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .no-leaves-msg {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-style: italic;
+      padding: 8px 0;
+    }
+
+    .subject-sim-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .subject-sim-card {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .subject-sim-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .subject-sim-code {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .subject-sim-percent {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .subject-sim-bar {
+      height: 4px;
+      background: var(--bg-tertiary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .subject-sim-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
   </style>
 </head>
 
@@ -1659,14 +1894,15 @@
     <section id="loggerView" class="view"></section>
     <section id="calendarView" class="view"></section>
     <section id="syllabusView" class="view"></section>
+    <section id="simulatorView" class="view"></section>
     <section id="settingsView" class="view"></section>
   </main>
 
   <nav class="bottom-nav">
-    <button data-view="dashboard" class="active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></button>
-    <button data-view="logger"><i class="fas fa-edit"></i><span>Log Today</span></button>
+    <button data-view="dashboard" class="active"><i class="fas fa-chart-pie"></i><span>Home</span></button>
+    <button data-view="logger"><i class="fas fa-edit"></i><span>Log</span></button>
     <button data-view="calendar"><i class="fas fa-calendar-alt"></i><span>Calendar</span></button>
-    <button data-view="syllabus"><i class="fas fa-book"></i><span>Syllabus</span></button>
+    <button data-view="simulator"><i class="fas fa-calculator"></i><span>Simulator</span></button>
     <button data-view="settings"><i class="fas fa-cog"></i><span>Settings</span></button>
   </nav>
 
@@ -1711,15 +1947,34 @@
       Sunday: null
     };
 
+    const SEMESTER_END = "2026-03-31";
+
     const CALENDAR_EVENTS = {
-      "2026-01-16": { title: "166th College Foundation Day & 19th Convocation", status: "noclass", label: "NO CLASS DAY" },
-      "2026-01-17": { title: "Xavotsav 2026", status: "special", label: "EVENT" },
-      "2026-01-18": { title: "Xavotsav 2026", status: "special", label: "EVENT" },
-      "2026-01-19": { title: "Valedictory & Prize Distribution (3:00 PM)", status: "classday", label: "CLASS DAY" },
-      "2026-01-23": { title: "Netaji's Birth Anniversary", status: "holiday", label: "HOLIDAY" },
-      "2026-01-24": { title: "Beyond Barriers XXIV", status: "holiday", label: "HOLIDAY" },
+      // January 2026
+      "2026-01-01": { title: "New Year Day", status: "holiday", label: "HOLIDAY" },
+      "2026-01-10": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-01-12": { title: "Swami Vivekananda's Birth Anniversary", status: "holiday", label: "HOLIDAY" },
+      "2026-01-16": { title: "College Foundation Day (Est. 16.01.1860)", status: "special", label: "FOUNDATION DAY" },
+      "2026-01-17": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-01-23": { title: "Netaji's Birthday & Saraswati Puja", status: "holiday", label: "HOLIDAY" },
+      "2026-01-24": { title: "Calcutta University Foundation Day", status: "holiday", label: "HOLIDAY" },
       "2026-01-26": { title: "Republic Day", status: "holiday", label: "HOLIDAY" },
-      "2026-01-31": { title: "Annual Sports Day", status: "noclass", label: "NO CLASS DAY" }
+      "2026-01-31": { title: "Saturday Classes & Fee Payment Deadline", status: "classday", label: "SAT CLASS" },
+      // February 2026
+      "2026-02-07": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-02-14": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-02-21": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-02-28": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      // March 2026
+      "2026-03-03": { title: "Doljatra", status: "holiday", label: "HOLIDAY" },
+      "2026-03-04": { title: "Holi", status: "holiday", label: "HOLIDAY" },
+      "2026-03-05": { title: "Mid-Semester Exams Begin (B.Com M)", status: "special", label: "EXAMS" },
+      "2026-03-07": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-03-14": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-03-20": { title: "Eid-Ul-Fitr", status: "holiday", label: "HOLIDAY" },
+      "2026-03-21": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" },
+      "2026-03-26": { title: "Ram Navami", status: "holiday", label: "HOLIDAY" },
+      "2026-03-28": { title: "Saturday Classes (B.Com, BMS, M.Com, Education)", status: "classday", label: "SAT CLASS" }
     };
 
     const SYLLABUS = {
@@ -1851,7 +2106,8 @@
       return {
         settings: { targetPercentage: 75, notificationsEnabled: false, ciaSeminarEnabled: false },
         logs: {},
-        lastLoggedDate: null
+        lastLoggedDate: null,
+        plannedLeaves: []
       };
     }
 
@@ -2405,6 +2661,334 @@
       renderSyllabus();
     }
 
+    // ═══════════════════════════════════════════════════════════════
+    // LEAVE SIMULATOR FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════
+
+    function getWorkingDaysUntilEnd() {
+      const today = new Date();
+      const endDate = new Date(SEMESTER_END + "T00:00:00");
+      const workingDays = [];
+
+      let current = new Date(today);
+      current.setHours(0, 0, 0, 0);
+
+      while (current <= endDate) {
+        const dateStr = formatDate(current);
+        const schedule = getDaySchedule(dateStr);
+        const event = CALENDAR_EVENTS[dateStr];
+
+        // Check if it's a working day (has schedule) and not a holiday
+        if (schedule && (!event || event.status !== 'holiday')) {
+          workingDays.push(dateStr);
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      return workingDays;
+    }
+
+    function getUpcomingHolidays() {
+      const today = new Date();
+      const endDate = new Date(SEMESTER_END + "T00:00:00");
+      const holidays = [];
+
+      for (const dateStr in CALENDAR_EVENTS) {
+        const d = new Date(dateStr + "T00:00:00");
+        if (d >= today && d <= endDate && CALENDAR_EVENTS[dateStr].status === 'holiday') {
+          holidays.push({ date: dateStr, ...CALENDAR_EVENTS[dateStr] });
+        }
+      }
+
+      return holidays.sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    function calculateProjectedStats(additionalAbsences = []) {
+      // Start with current stats
+      const currentSubjectStats = calculateSubjectStats();
+      const projectedStats = {};
+
+      // Copy current stats
+      for (const code in currentSubjectStats) {
+        projectedStats[code] = { ...currentSubjectStats[code] };
+      }
+
+      // Get all future working days up to semester end
+      const today = new Date();
+      const endDate = new Date(SEMESTER_END + "T00:00:00");
+      let current = new Date(today);
+      current.setDate(current.getDate() + 1); // Start from tomorrow
+      current.setHours(0, 0, 0, 0);
+
+      while (current <= endDate) {
+        const dateStr = formatDate(current);
+        const schedule = getDaySchedule(dateStr);
+        const event = CALENDAR_EVENTS[dateStr];
+
+        // Skip holidays
+        if (event && event.status === 'holiday') {
+          current.setDate(current.getDate() + 1);
+          continue;
+        }
+
+        if (schedule) {
+          const isPlannedLeave = additionalAbsences.includes(dateStr);
+
+          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+            const subjectCode = schedule[period];
+            if (subjectCode && projectedStats[subjectCode]) {
+              if (isPlannedLeave) {
+                projectedStats[subjectCode].absent++;
+              } else {
+                projectedStats[subjectCode].present++;
+              }
+            }
+          }
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      // Recalculate percentages
+      for (const code in projectedStats) {
+        const s = projectedStats[code];
+        s.total = s.present + s.absent;
+        s.percent = s.total > 0 ? (s.present / s.total) * 100 : 0;
+      }
+
+      return projectedStats;
+    }
+
+    function addPlannedLeave(dateStr) {
+      if (!state.plannedLeaves) state.plannedLeaves = [];
+
+      // Validate date
+      const d = new Date(dateStr + "T00:00:00");
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const endDate = new Date(SEMESTER_END + "T00:00:00");
+
+      if (d <= today) {
+        alert("Cannot add leave for today or past dates");
+        return;
+      }
+
+      if (d > endDate) {
+        alert("Date is after semester end");
+        return;
+      }
+
+      // Check if it's a working day
+      const schedule = getDaySchedule(dateStr);
+      const event = CALENDAR_EVENTS[dateStr];
+
+      if (!schedule || (event && event.status === 'holiday')) {
+        alert("This is already a holiday or non-working day");
+        return;
+      }
+
+      if (!state.plannedLeaves.includes(dateStr)) {
+        state.plannedLeaves.push(dateStr);
+        state.plannedLeaves.sort();
+        saveState();
+        renderSimulator();
+      }
+    }
+
+    function removePlannedLeave(dateStr) {
+      if (!state.plannedLeaves) return;
+      state.plannedLeaves = state.plannedLeaves.filter(d => d !== dateStr);
+      saveState();
+      renderSimulator();
+    }
+
+    function clearAllPlannedLeaves() {
+      state.plannedLeaves = [];
+      saveState();
+      renderSimulator();
+    }
+
+    function formatShortDate(dateStr) {
+      const d = new Date(dateStr + "T00:00:00");
+      const day = d.getDate();
+      const month = MONTHS[d.getMonth()].substring(0, 3);
+      const dayName = DAYS[d.getDay()].substring(0, 3);
+      return `${dayName}, ${month} ${day}`;
+    }
+
+    function renderSimulator() {
+      if (!state.plannedLeaves) state.plannedLeaves = [];
+
+      const workingDays = getWorkingDaysUntilEnd();
+      const upcomingHolidays = getUpcomingHolidays();
+      const projectedStats = calculateProjectedStats(state.plannedLeaves);
+      const currentStats = calculateSubjectStats();
+
+      // Calculate overall stats
+      let currentTotal = 0, currentPresent = 0;
+      let projectedTotal = 0, projectedPresent = 0;
+
+      for (const code in currentStats) {
+        currentTotal += currentStats[code].total;
+        currentPresent += currentStats[code].present;
+      }
+
+      for (const code in projectedStats) {
+        projectedTotal += projectedStats[code].total;
+        projectedPresent += projectedStats[code].present;
+      }
+
+      const currentOverall = currentTotal > 0 ? (currentPresent / currentTotal) * 100 : 0;
+      const projectedOverall = projectedTotal > 0 ? (projectedPresent / projectedTotal) * 100 : 0;
+
+      // Count periods being missed
+      let periodsToMiss = 0;
+      for (const dateStr of state.plannedLeaves) {
+        const schedule = getDaySchedule(dateStr);
+        if (schedule) {
+          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+            if (schedule[period]) periodsToMiss++;
+          }
+        }
+      }
+
+      let html = `
+        <div class="section-title"><i class="fas fa-calculator"></i> Attendance Simulator</div>
+        
+        <div class="simulator-card">
+          <div class="simulator-header">
+            <div class="simulator-title"><i class="fas fa-calendar-plus"></i> Plan Your Leaves</div>
+          </div>
+          
+          <div class="quick-add-btns">
+            <span style="font-size: 0.75rem; color: var(--text-muted); margin-right: 4px;">Quick add:</span>`;
+
+      // Add next 5 working days as quick add buttons
+      const nextWorkingDays = workingDays.slice(0, 5);
+      for (const wd of nextWorkingDays) {
+        if (!state.plannedLeaves.includes(wd)) {
+          html += `<button class="quick-add-btn" onclick="addPlannedLeave('${wd}')">${formatShortDate(wd)}</button>`;
+        }
+      }
+
+      html += `</div>
+          
+          <div class="add-leave-section">
+            <input type="date" id="leaveDate" class="date-input" min="${formatDate(new Date())}" max="${SEMESTER_END}">
+            <button class="add-leave-btn" onclick="addPlannedLeave(document.getElementById('leaveDate').value)">
+              <i class="fas fa-plus"></i> Add
+            </button>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-weight: 600; font-size: 0.9rem;">Planned Leaves (${state.plannedLeaves.length})</span>
+            ${state.plannedLeaves.length > 0 ? `<button class="clear-all-btn" onclick="clearAllPlannedLeaves()">Clear All</button>` : ''}
+          </div>
+          
+          <div class="planned-leaves-list">`;
+
+      if (state.plannedLeaves.length === 0) {
+        html += `<div class="no-leaves-msg">No planned leaves yet. Add dates to simulate your attendance.</div>`;
+      } else {
+        for (const leave of state.plannedLeaves) {
+          html += `<span class="leave-chip">${formatShortDate(leave)} <i class="fas fa-times remove-leave" onclick="removePlannedLeave('${leave}')"></i></span>`;
+        }
+      }
+
+      html += `</div>
+        </div>
+        
+        <div class="simulator-card">
+          <div class="simulator-header">
+            <div class="simulator-title"><i class="fas fa-chart-bar"></i> Projected Results</div>
+          </div>
+          
+          <div class="simulation-results">
+            <div class="result-row">
+              <span class="result-label">Current Attendance</span>
+              <span class="result-value ${currentOverall >= state.settings.targetPercentage ? 'positive' : 'negative'}">${currentOverall.toFixed(2)}%</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Projected (End of Semester)</span>
+              <span class="result-value ${projectedOverall >= state.settings.targetPercentage ? 'positive' : projectedOverall >= 60 ? 'warning' : 'negative'}">${projectedOverall.toFixed(2)}%</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Working Days Remaining</span>
+              <span class="result-value">${workingDays.length}</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Planned Leave Days</span>
+              <span class="result-value ${state.plannedLeaves.length > 0 ? 'warning' : ''}">${state.plannedLeaves.length}</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Classes to Miss</span>
+              <span class="result-value ${periodsToMiss > 0 ? 'negative' : ''}">${periodsToMiss} periods</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Target</span>
+              <span class="result-value">${state.settings.targetPercentage}%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="simulator-card">
+          <div class="simulator-header">
+            <div class="simulator-title"><i class="fas fa-book-open"></i> Subject-wise Projection</div>
+          </div>
+          
+          <div class="subject-sim-grid">`;
+
+      for (const code in projectedStats) {
+        const p = projectedStats[code];
+        const subject = SUBJECTS[code];
+        const isSafe = p.percent >= state.settings.targetPercentage;
+        const color = isSafe ? subject.color : (p.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
+
+        html += `
+          <div class="subject-sim-card">
+            <div class="subject-sim-header">
+              <span class="subject-sim-code">${code}</span>
+              <span class="subject-sim-percent" style="color: ${color}">${p.percent.toFixed(1)}%</span>
+            </div>
+            <div class="subject-sim-bar">
+              <div class="subject-sim-fill" style="width: ${Math.min(100, p.percent)}%; background: ${color}"></div>
+            </div>
+          </div>`;
+      }
+
+      html += `</div>
+        </div>
+        
+        <div class="simulator-card">
+          <div class="simulator-header">
+            <div class="simulator-title"><i class="fas fa-umbrella-beach"></i> Upcoming Holidays</div>
+          </div>
+          
+          <div style="max-height: 200px; overflow-y: auto;">`;
+
+      if (upcomingHolidays.length === 0) {
+        html += `<div class="no-leaves-msg">No upcoming holidays in the semester.</div>`;
+      } else {
+        for (const holiday of upcomingHolidays) {
+          html += `
+            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--danger);"></div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 0.85rem;">${holiday.title}</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${formatShortDate(holiday.date)}</div>
+              </div>
+            </div>`;
+        }
+      }
+
+      html += `</div>
+        </div>
+      `;
+
+      document.getElementById("simulatorView").innerHTML = html;
+    }
+
     function renderSettings() {
       const installBtnHtml = deferredPrompt ? `
       <div class="settings-item">
@@ -2487,6 +3071,7 @@
       else if (view === 'logger') renderLogger();
       else if (view === 'calendar') renderCalendar();
       else if (view === 'syllabus') renderSyllabus();
+      else if (view === 'simulator') renderSimulator();
       else if (view === 'settings') renderSettings();
     }
 
@@ -2495,6 +3080,7 @@
       renderLogger();
       renderCalendar();
       renderSyllabus();
+      renderSimulator();
       renderSettings();
     }
 
@@ -2550,7 +3136,7 @@
     setInterval(checkNotification, 5 * 60 * 1000);
 
     // Swipe Gesture Support
-    const TABS = ['dashboard', 'logger', 'calendar', 'syllabus', 'settings'];
+    const TABS = ['dashboard', 'logger', 'calendar', 'simulator', 'settings'];
     let currentTabIndex = 0;
     let touchStartX = 0;
     let touchStartY = 0;
