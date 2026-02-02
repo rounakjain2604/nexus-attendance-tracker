@@ -1940,9 +1940,9 @@
     const SCHEDULE = {
       Monday: { P1: "IDTX", P2: "IDTX", P3: "AUDA", P4: "FRFS", P5: "FRFS" },
       Tuesday: { P1: "INBA", P2: "AUDA", P3: "AUDA", P4: "FRFS", P5: "FRFS" },
-      Wednesday: { P1: "ETCG", P2: "INBA", P3: "IDTX", P4: "ETCG", P5: null },
-      Thursday: { P1: "IDTX", P2: "ETCG", P3: "AUDA", P4: "IDTX", P5: "INBA" },
-      Friday: { P1: "INBA", P2: "AUDA", P3: "ETCG", P4: null, P5: null },
+      Wednesday: { P1: "ETCG", P2: "ETCG", P3: "IDTX", P4: "INBA", P5: null },
+      Thursday: { P1: "IDTX", P2: "ETCG", P3: "AUDA", P4: "IDTX", P5: "ETCG" },
+      Friday: { P1: "INBA", P2: "AUDA", P3: "INBA", P4: null, P5: null },
       Saturday: null,
       Sunday: null
     };
@@ -2296,41 +2296,51 @@
       html += `</div>
 
     <div style="margin-top: 32px;">
-      <div class="section-title"><i class="fas fa-calendar-day"></i> Today's Schedule</div>
-      <div class="subject-list-container">`;
+      <div class="section-title"><i class="fas fa-table"></i> Weekly Timetable</div>
+      <div class="card" style="overflow-x: auto; padding: 12px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+          <thead>
+            <tr style="background: var(--bg-tertiary);">
+              <th style="padding: 8px 4px; text-align: left; font-weight: 600; border-radius: 6px 0 0 6px;">Day</th>
+              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P1<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:00</span></th>
+              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P2<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:40</span></th>
+              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P3<br><span style="font-size: 0.6rem; color: var(--text-muted);">7:20</span></th>
+              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P4<br><span style="font-size: 0.6rem; color: var(--text-muted);">8:30</span></th>
+              <th style="padding: 8px 4px; text-align: center; font-weight: 500; border-radius: 0 6px 6px 0;">P5<br><span style="font-size: 0.6rem; color: var(--text-muted);">9:10</span></th>
+            </tr>
+          </thead>
+          <tbody>`;
 
-      if (isBeforeSemester(dateStr)) {
-        html += `<div class="no-class-today"><i class="fas fa-hourglass-start"></i><div>Semester starts Jan 5, 2026</div></div>`;
-      } else if (!schedule) {
-        html += `<div class="no-class-today"><i class="fas fa-umbrella-beach"></i><div>No classes today!</div></div>`;
-      } else {
+      const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+      const dayAbbr = ["MON", "TUE", "WED", "THU", "FRI"];
+      const todayDay = new Date().getDay();
+
+      for (let i = 0; i < dayNames.length; i++) {
+        const sch = SCHEDULE[dayNames[i]];
+        const isToday = todayDay === i + 1;
+        const rowBg = isToday ? 'background: rgba(224, 122, 95, 0.1); font-weight: 600;' : '';
+
+        html += `<tr style="${rowBg}">
+          <td style="padding: 10px 4px; font-weight: 600; ${isToday ? 'color: var(--accent-primary);' : ''}">${dayAbbr[i]}${isToday ? ' 📍' : ''}</td>`;
+
         for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
-          const subjectCode = schedule[period];
-          const slot = TIME_SLOTS[period];
-          const subject = subjectCode ? SUBJECTS[subjectCode] : null;
-          const status = log[period] || null;
-
-          if (subject) {
-            html += `
-      <div class="quick-log-period">
-        <div class="sl-icon" style="width: 40px; height: 40px; font-size: 1.2rem; background: ${subject.color}20; color: ${subject.color};">
-          <i class="fas ${subject.icon}"></i>
-        </div>
-        <div class="quick-log-info">
-          <div class="quick-log-subject" style="font-size: 1rem; margin-bottom: 2px;">${subject.name}</div>
-          <div class="quick-log-time">${slot.start} - ${slot.end} • ${subjectCode}</div>
-        </div>
-        <div class="quick-log-btns">
-          <button class="quick-btn present ${status === 'present' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','present', event)" title="Present"><i class="fas fa-check"></i></button>
-          <button class="quick-btn absent ${status === 'absent' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','absent', event)" title="Absent"><i class="fas fa-times"></i></button>
-          <button class="quick-btn cancelled ${status === 'cancelled' ? 'active' : ''}" onclick="quickLog('${dateStr}','${period}','cancelled', event)" title="Cancelled"><i class="fas fa-minus"></i></button>
-        </div>
-      </div>`;
+          const subjectCode = sch ? sch[period] : null;
+          if (subjectCode) {
+            const subject = SUBJECTS[subjectCode];
+            html += `<td style="padding: 6px 2px; text-align: center;">
+              <div style="background: ${subject.color}20; color: ${subject.color}; padding: 4px 6px; border-radius: 6px; font-weight: 600; font-size: 0.7rem;">${subjectCode}</div>
+            </td>`;
+          } else {
+            html += `<td style="padding: 6px 2px; text-align: center; color: var(--text-muted);">—</td>`;
           }
         }
+
+        html += `</tr>`;
       }
 
-      html += `</div></div>`;
+      html += `</tbody></table>
+      </div>
+    </div>`;
       document.getElementById("dashboardView").innerHTML = html;
     }
 
