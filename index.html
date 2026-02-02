@@ -3163,6 +3163,10 @@
         <div class="settings-info"><h3>Daily Reminder</h3><p>Get notified at 2:00 PM</p></div>
         <div class="toggle-switch ${state.settings.notificationsEnabled ? 'active' : ''}" onclick="toggleNotifications()"></div>
       </div>
+      <div class="settings-item" style="border: 1px solid var(--accent-primary); border-radius: 12px; padding: 16px; margin-bottom: 16px; background: rgba(224, 122, 95, 0.05);">
+        <div class="settings-info"><h3 style="color: var(--accent-primary);">📥 Sync Attendance</h3><p>Import from official records (Feb 2, 2026)</p></div>
+        <button class="settings-btn" style="background: var(--accent-primary); color: white;" onclick="syncAttendanceNow()"><i class="fas fa-sync-alt"></i> Sync</button>
+      </div>
       <div class="settings-item">
         <div class="settings-info"><h3>Export Data</h3><p>Download logs as JSON</p></div>
         <button class="settings-btn" onclick="exportData()"><i class="fas fa-download"></i></button>
@@ -3194,6 +3198,83 @@
         saveState();
         renderSettings();
       }
+    }
+
+    // Import attendance from official totals (attended/delivered per subject)
+    function importAttendanceFromTotals(targetAttendance) {
+      // targetAttendance format: { AUDA: {present: 8, total: 16}, ETCG: {...}, ... }
+      const DAYS_MAP = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+      // Calculate all periods delivered per subject from semester start to today
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      const semStart = new Date(SEMESTER_START + "T00:00:00");
+
+      // Build list of all periods per subject
+      const allPeriods = {};
+      for (const code in SUBJECTS) {
+        if (code === 'CIA') continue;
+        allPeriods[code] = [];
+      }
+
+      let current = new Date(semStart);
+      while (current <= today) {
+        const dateStr = formatDate(current);
+        const event = CALENDAR_EVENTS[dateStr];
+
+        // Skip holidays
+        if (event && event.status === 'holiday') {
+          current.setDate(current.getDate() + 1);
+          continue;
+        }
+
+        const dayName = DAYS_MAP[current.getDay()];
+        const schedule = SCHEDULE[dayName];
+
+        if (schedule) {
+          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+            const subjectCode = schedule[period];
+            if (subjectCode && allPeriods[subjectCode]) {
+              allPeriods[subjectCode].push({ date: dateStr, period });
+            }
+          }
+        }
+
+        current.setDate(current.getDate() + 1);
+      }
+
+      // Now set attendance: mark first N as present, rest as absent
+      state.logs = {};
+
+      for (const code in targetAttendance) {
+        const { present, total } = targetAttendance[code];
+        const periods = allPeriods[code] || [];
+
+        // Take only the number of periods equal to total delivered
+        const deliveredPeriods = periods.slice(0, total);
+
+        // Mark first 'present' periods as present, rest as absent
+        for (let i = 0; i < deliveredPeriods.length; i++) {
+          const { date, period } = deliveredPeriods[i];
+          if (!state.logs[date]) state.logs[date] = {};
+          state.logs[date][period] = i < present ? "present" : "absent";
+        }
+      }
+
+      saveState();
+      renderAll();
+      alert("Attendance imported successfully!");
+    }
+
+    // Quick sync function for user's current attendance
+    function syncAttendanceNow() {
+      importAttendanceFromTotals({
+        AUDA: { present: 8, total: 16 },
+        ETCG: { present: 6, total: 16 },
+        FRFS: { present: 6, total: 12 },
+        IDTX: { present: 6, total: 16 },
+        INBA: { present: 5, total: 12 }
+      });
     }
 
     function exportData() {
