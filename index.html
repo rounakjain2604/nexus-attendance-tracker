@@ -2617,7 +2617,12 @@
         const selSchedule = getDaySchedule(selectedCalendarDate);
         const selLog = state.logs[selectedCalendarDate] || {};
 
-        html += `<div class="day-details"><div class="day-details-header">${DAYS[selDate.getDay()]}, ${MONTHS[selDate.getMonth()]} ${selDate.getDate()}</div>`;
+        // Check if selected date is in the future
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const isFutureDate = selDate > today;
+
+        html += `<div class="day-details"><div class="day-details-header">${DAYS[selDate.getDay()]}, ${MONTHS[selDate.getMonth()]} ${selDate.getDate()}${isFutureDate ? ' <span style="font-size: 0.75rem; color: var(--accent-primary);">(Upcoming)</span>' : ''}</div>`;
 
         if (selEvent) {
           html += `<div class="event-info">
@@ -2628,6 +2633,25 @@
 
         if (isBeforeSemester(selectedCalendarDate)) {
           html += `<p style="color:var(--text-secondary)">Before semester start</p>`;
+        } else if (isFutureDate) {
+          // For future dates, show event info but no attendance logging
+          if (!selEvent) {
+            if (!selSchedule) {
+              html += `<p style="color:var(--text-secondary)">No classes scheduled</p>`;
+            } else {
+              html += `<p style="color:var(--text-secondary); margin-top: 12px;">Scheduled classes for this day:</p>`;
+              for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
+                const subjectCode = selSchedule[period];
+                const subject = subjectCode ? SUBJECTS[subjectCode] : null;
+                if (subject) {
+                  html += `<div style="display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border-subtle);">
+                    <span style="background: ${subject.color}20; color: ${subject.color}; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">${subjectCode}</span>
+                    <span style="color: var(--text-secondary); font-size: 0.8rem;">${TIME_SLOTS[period].start} - ${TIME_SLOTS[period].end}</span>
+                  </div>`;
+                }
+              }
+            }
+          }
         } else if (!selSchedule) {
           html += `<p style="color:var(--text-secondary)">No classes</p>`;
         } else {
@@ -2676,11 +2700,7 @@
     }
 
     function selectDate(dateStr) {
-      const d = new Date(dateStr + "T00:00:00");
-      // Block only future dates
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
-      if (d > today) return;
+      // Allow selecting any date to view details (including future dates with events)
       selectedCalendarDate = selectedCalendarDate === dateStr ? null : dateStr;
       renderCalendar();
     }
