@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nexus-v20';
+const CACHE_NAME = 'nexus-v21';
 const ASSETS = [
     './',
     './index.html',
