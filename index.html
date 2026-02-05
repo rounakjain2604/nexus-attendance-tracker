@@ -2397,7 +2397,7 @@
 
       // === SECTION 1: Subject Overview (Collapsible) ===
       const subjectExpanded = dashboardSections.subjectOverview;
-      const subjectPreview = `${subjectCount} subjects • ${avgPercent.toFixed(1)}% avg`;
+      const subjectPreview = `${stats.present}/${stats.total} attended • ${avgPercent.toFixed(1)}% avg`;
 
       html += `
       <div class="collapsible-section ${subjectExpanded ? 'expanded' : ''}" style="margin-top: 16px;">
