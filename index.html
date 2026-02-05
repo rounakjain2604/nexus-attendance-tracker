@@ -1877,6 +1877,89 @@
       border-radius: 2px;
       transition: width 0.3s ease;
     }
+
+    /* Collapsible Dashboard Sections */
+    .collapsible-section {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .collapsible-section:hover {
+      box-shadow: var(--shadow-medium);
+    }
+
+    .collapsible-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease;
+    }
+
+    .collapsible-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .collapsible-header:active {
+      background: rgba(214, 74, 47, 0.08);
+    }
+
+    .collapsible-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .collapsible-title-row i {
+      color: var(--accent-primary);
+      font-size: 1rem;
+    }
+
+    .collapsible-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .collapsible-preview {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      margin-left: 8px;
+      padding: 4px 10px;
+      background: var(--bg-tertiary);
+      border-radius: 12px;
+    }
+
+    .collapsible-toggle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: transform 0.3s ease;
+    }
+
+    .collapsible-section.expanded .collapsible-toggle {
+      transform: rotate(180deg);
+    }
+
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 20px;
+    }
+
+    .collapsible-section.expanded .collapsible-content {
+      max-height: 2000px;
+      padding: 0 20px 20px;
+    }
   </style>
 </head>
 
@@ -2108,6 +2191,17 @@
     let calendarMonth = new Date().getMonth();
     let calendarYear = new Date().getFullYear();
     let expandedSubjects = {};
+    let dashboardSections = {
+      subjectOverview: false,
+      weeklyTimetable: false,
+      ciaExamTimetable: false
+    };
+
+    function toggleDashboardSection(sectionId) {
+      hapticFeedback();
+      dashboardSections[sectionId] = !dashboardSections[sectionId];
+      renderDashboard();
+    }
 
     function loadState() {
       try {
@@ -2262,14 +2356,61 @@
       const hour = today.getHours();
       const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
+      // Calculate overall stats for preview
+      const stats = calculateStats();
+      const subjectCount = Object.keys(subjectStats).length;
+      const avgPercent = subjectCount > 0 ? Object.values(subjectStats).reduce((sum, s) => sum + s.percent, 0) / subjectCount : 0;
+
+      // Get today's info for timetable preview
+      const todayDay = today.getDay();
+      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const todayName = dayNames[todayDay];
+      const todaySchedule = SCHEDULE[todayName];
+      const classCount = todaySchedule ? Object.values(todaySchedule).filter(v => v !== null).length : 0;
+
+      // Get next exam info for CIA preview
+      const ciaExams = [];
+      const todayDateStr = formatDate(today);
+      for (const ds in CALENDAR_EVENTS) {
+        const event = CALENDAR_EVENTS[ds];
+        if (event.label && (event.label.includes('CIA') || event.title.startsWith('CIA'))) {
+          const examDate = new Date(ds + 'T00:00:00');
+          const daysUntil = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+          ciaExams.push({
+            date: ds,
+            examDate: examDate,
+            title: event.title,
+            label: event.label,
+            daysUntil: daysUntil
+          });
+        }
+      }
+      ciaExams.sort((a, b) => a.date.localeCompare(b.date));
+      const upcomingExams = ciaExams.filter(e => e.daysUntil >= 0);
+      const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
+
       let html = `
       <div style="margin-bottom: 24px;">
         <h1 style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.75rem; color: var(--text-primary); margin-bottom: 4px;">${greeting},</h1>
         <p style="color: var(--text-secondary); font-size: 1rem;">Here's your attendance status</p>
-      </div>
+      </div>`;
 
-      <div class="section-title" style="margin-top: 32px;"><i class="fas fa-chart-line"></i> Subject Overview</div>
-      <div class="subject-list-container">`;
+      // === SECTION 1: Subject Overview (Collapsible) ===
+      const subjectExpanded = dashboardSections.subjectOverview;
+      const subjectPreview = `${subjectCount} subjects • ${avgPercent.toFixed(1)}% avg`;
+
+      html += `
+      <div class="collapsible-section ${subjectExpanded ? 'expanded' : ''}" style="margin-top: 16px;">
+        <div class="collapsible-header" onclick="toggleDashboardSection('subjectOverview')">
+          <div class="collapsible-title-row">
+            <i class="fas fa-chart-line"></i>
+            <span class="collapsible-title">Subject Overview</span>
+            <span class="collapsible-preview">${subjectPreview}</span>
+          </div>
+          <i class="fas fa-chevron-down collapsible-toggle"></i>
+        </div>
+        <div class="collapsible-content">
+          <div class="subject-list-container">`;
 
       // Add subject list cards
       for (const code in subjectStats) {
@@ -2278,56 +2419,71 @@
         const bunkInfo = calculateSubjectBunk(code, subjectStats);
 
         const isSafe = s.percent >= state.settings.targetPercentage;
-        // Use subject color for progress if safe, else warning/danger
         const progressColor = isSafe ? subject.color : (s.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
         const badgeClass = isSafe ? 'safe' : 'danger';
         const badgeText = bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Attend ${bunkInfo.value}`;
 
         html += `
-      <div class="subject-list-card" onclick="showView('syllabus'); toggleSubject('${code}')">
-        <div class="sl-icon" style="background: ${subject.color}; color: white;">
-          <i class="fas ${subject.icon}"></i>
-        </div>
-        <div class="sl-content">
-          <div class="sl-header">
-            <span class="sl-code">${code}</span>
-            <span class="sl-name">${subject.name}</span>
-          </div>
-          <div class="sl-progress-bg">
-            <div class="sl-progress-fill" style="width: ${s.percent}%; background: ${progressColor}"></div>
-          </div>
-        </div>
-        <div class="sl-stats">
-          <span class="sl-percent" style="color: ${progressColor}">${s.percent.toFixed(1)}%</span>
-          <span class="sl-badge ${badgeClass}">${badgeText}</span>
-        </div>
-      </div>`;
+          <div class="subject-list-card" onclick="event.stopPropagation(); showView('syllabus'); toggleSubject('${code}')">
+            <div class="sl-icon" style="background: ${subject.color}; color: white;">
+              <i class="fas ${subject.icon}"></i>
+            </div>
+            <div class="sl-content">
+              <div class="sl-header">
+                <span class="sl-code">${code}</span>
+                <span class="sl-name">${subject.name}</span>
+              </div>
+              <div class="sl-progress-bg">
+                <div class="sl-progress-fill" style="width: ${s.percent}%; background: ${progressColor}"></div>
+              </div>
+            </div>
+            <div class="sl-stats">
+              <span class="sl-percent" style="color: ${progressColor}">${s.percent.toFixed(1)}%</span>
+              <span class="sl-badge ${badgeClass}">${badgeText}</span>
+            </div>
+          </div>`;
       }
 
-      html += `</div>
+      html += `
+          </div>
+        </div>
+      </div>`;
 
-    <div style="margin-top: 32px;">
-      <div class="section-title"><i class="fas fa-table"></i> Weekly Timetable</div>
-      <div class="card" style="overflow-x: auto; padding: 12px;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
-          <thead>
-            <tr style="background: var(--bg-tertiary);">
-              <th style="padding: 8px 4px; text-align: left; font-weight: 600; border-radius: 6px 0 0 6px;">Day</th>
-              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P1<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:00</span></th>
-              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P2<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:40</span></th>
-              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P3<br><span style="font-size: 0.6rem; color: var(--text-muted);">7:20</span></th>
-              <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P4<br><span style="font-size: 0.6rem; color: var(--text-muted);">8:30</span></th>
-              <th style="padding: 8px 4px; text-align: center; font-weight: 500; border-radius: 0 6px 6px 0;">P5<br><span style="font-size: 0.6rem; color: var(--text-muted);">9:10</span></th>
-            </tr>
-          </thead>
-          <tbody>`;
+      // === SECTION 2: Weekly Timetable (Collapsible) ===
+      const timetableExpanded = dashboardSections.weeklyTimetable;
+      const timetablePreview = todayDay === 0 || todayDay === 6
+        ? "Weekend - No classes"
+        : `Today: ${todayName.substring(0, 3).toUpperCase()} • ${classCount} classes`;
 
-      const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+      html += `
+      <div class="collapsible-section ${timetableExpanded ? 'expanded' : ''}">
+        <div class="collapsible-header" onclick="toggleDashboardSection('weeklyTimetable')">
+          <div class="collapsible-title-row">
+            <i class="fas fa-table"></i>
+            <span class="collapsible-title">Weekly Timetable</span>
+            <span class="collapsible-preview">${timetablePreview}</span>
+          </div>
+          <i class="fas fa-chevron-down collapsible-toggle"></i>
+        </div>
+        <div class="collapsible-content">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+            <thead>
+              <tr style="background: var(--bg-tertiary);">
+                <th style="padding: 8px 4px; text-align: left; font-weight: 600; border-radius: 6px 0 0 6px;">Day</th>
+                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P1<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:00</span></th>
+                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P2<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:40</span></th>
+                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P3<br><span style="font-size: 0.6rem; color: var(--text-muted);">7:20</span></th>
+                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P4<br><span style="font-size: 0.6rem; color: var(--text-muted);">8:30</span></th>
+                <th style="padding: 8px 4px; text-align: center; font-weight: 500; border-radius: 0 6px 6px 0;">P5<br><span style="font-size: 0.6rem; color: var(--text-muted);">9:10</span></th>
+              </tr>
+            </thead>
+            <tbody>`;
+
       const dayAbbr = ["MON", "TUE", "WED", "THU", "FRI"];
-      const todayDay = new Date().getDay();
+      const weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
-      for (let i = 0; i < dayNames.length; i++) {
-        const sch = SCHEDULE[dayNames[i]];
+      for (let i = 0; i < weekdayNames.length; i++) {
+        const sch = SCHEDULE[weekdayNames[i]];
         const isToday = todayDay === i + 1;
         const rowBg = isToday ? 'background: rgba(224, 122, 95, 0.1); font-weight: 600;' : '';
 
@@ -2349,53 +2505,46 @@
         html += `</tr>`;
       }
 
-      html += `</tbody></table>
-      </div>
-    </div>`;
+      html += `
+            </tbody>
+          </table>
+        </div>
+      </div>`;
 
-      // CIA Exam Timetable Section
-      const ciaExams = [];
-      const todayDateStr = formatDate(today);
-      for (const dateStr in CALENDAR_EVENTS) {
-        const event = CALENDAR_EVENTS[dateStr];
-        if (event.label && (event.label.includes('CIA') || event.title.startsWith('CIA'))) {
-          const examDate = new Date(dateStr + 'T00:00:00');
-          const daysUntil = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
-          ciaExams.push({
-            date: dateStr,
-            examDate: examDate,
-            title: event.title,
-            label: event.label,
-            daysUntil: daysUntil
-          });
-        }
-      }
-
-      // Sort by date
-      ciaExams.sort((a, b) => a.date.localeCompare(b.date));
-
+      // === SECTION 3: CIA Exam Timetable (Collapsible) ===
       if (ciaExams.length > 0) {
+        const ciaExpanded = dashboardSections.ciaExamTimetable;
+        const ciaPreview = nextExam
+          ? (nextExam.daysUntil === 0 ? "Exam today!" : `Next exam in ${nextExam.daysUntil} day${nextExam.daysUntil !== 1 ? 's' : ''}`)
+          : "All exams completed";
+
         html += `
-    <div style="margin-top: 32px;">
-      <div class="section-title"><i class="fas fa-file-alt"></i> CIA Exam Timetable</div>
-      <div class="card" style="padding: 0; overflow: hidden;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed;">
-          <thead>
-            <tr style="background: linear-gradient(135deg, var(--accent-primary), #9F86C0); color: white;">
-              <th style="padding: 12px 8px; text-align: left; font-weight: 600; width: 80px;">Date</th>
-              <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Subject</th>
-              <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 70px;">Time</th>
-              <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 55px;">Days</th>
-            </tr>
-          </thead>
-          <tbody>`;
+        <div class="collapsible-section ${ciaExpanded ? 'expanded' : ''}">
+          <div class="collapsible-header" onclick="toggleDashboardSection('ciaExamTimetable')">
+            <div class="collapsible-title-row">
+              <i class="fas fa-file-alt"></i>
+              <span class="collapsible-title">CIA Exam Timetable</span>
+              <span class="collapsible-preview">${ciaPreview}</span>
+            </div>
+            <i class="fas fa-chevron-down collapsible-toggle"></i>
+          </div>
+          <div class="collapsible-content">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed;">
+              <thead>
+                <tr style="background: linear-gradient(135deg, var(--accent-primary), #9F86C0); color: white;">
+                  <th style="padding: 12px 8px; text-align: left; font-weight: 600; width: 80px;">Date</th>
+                  <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Subject</th>
+                  <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 70px;">Time</th>
+                  <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 55px;">Days</th>
+                </tr>
+              </thead>
+              <tbody>`;
 
         ciaExams.forEach((exam, idx) => {
           const examDate = exam.examDate;
           const dayName = DAYS[examDate.getDay()].substring(0, 3).toUpperCase();
           const dateDisplay = `${dayName}, ${examDate.getDate()} ${MONTHS[examDate.getMonth()].substring(0, 3)}`;
 
-          // Extract subject name and time from title
           let subjectName = exam.title.replace('CIA: ', '').replace('CIA ', '');
           let examTime = '';
           if (subjectName.includes('|')) {
@@ -2410,9 +2559,6 @@
             examTime = '-';
           }
 
-          // Subject names will wrap naturally - no truncation
-
-          // Color coding based on days remaining
           let daysColor = 'var(--text-muted)';
           let daysBg = 'transparent';
           let daysText = exam.daysUntil > 0 ? exam.daysUntil : (exam.daysUntil === 0 ? 'Today!' : 'Done');
@@ -2431,7 +2577,6 @@
             daysBg = 'rgba(46, 139, 87, 0.1)';
           }
 
-          // Label badge color
           let labelColor = '#9F86C0';
           if (exam.label === 'CIA PRACTICAL') labelColor = '#3D5A80';
           else if (exam.label === 'CIA SEMINAR') labelColor = '#E07A5F';
@@ -2458,10 +2603,10 @@
         });
 
         html += `
-          </tbody>
-        </table>
-      </div>
-    </div>`;
+              </tbody>
+            </table>
+          </div>
+        </div>`;
       }
 
       document.getElementById("dashboardView").innerHTML = html;
