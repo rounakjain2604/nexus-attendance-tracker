@@ -3059,78 +3059,7 @@
       return projectedStats;
     }
 
-    // Calculate projected stats up to end of February assuming all classes are attended
-    function calculateFebruaryProjectedStats() {
-      const currentSubjectStats = calculateSubjectStats();
-      const projectedStats = {};
 
-      // Copy current stats
-      for (const code in currentSubjectStats) {
-        projectedStats[code] = { ...currentSubjectStats[code] };
-      }
-
-      // Get all remaining working days until end of February
-      const today = new Date();
-      const febEnd = new Date("2026-02-28T23:59:59");
-      let current = new Date(today);
-      current.setDate(current.getDate() + 1); // Start from tomorrow
-      current.setHours(0, 0, 0, 0);
-
-      let classesToAttend = 0;
-
-      while (current <= febEnd) {
-        const dateStr = formatDate(current);
-        const schedule = getDaySchedule(dateStr);
-        const event = CALENDAR_EVENTS[dateStr];
-
-        // Skip holidays
-        if (event && event.status === 'holiday') {
-          current.setDate(current.getDate() + 1);
-          continue;
-        }
-
-        if (schedule) {
-          for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
-            const subjectCode = schedule[period];
-            if (subjectCode && projectedStats[subjectCode]) {
-              projectedStats[subjectCode].present++;
-              classesToAttend++;
-            }
-          }
-        }
-
-        current.setDate(current.getDate() + 1);
-      }
-
-      // Recalculate percentages
-      for (const code in projectedStats) {
-        const s = projectedStats[code];
-        s.total = s.present + s.absent;
-        s.percent = s.total > 0 ? (s.present / s.total) * 100 : 0;
-      }
-
-      return { projectedStats, classesToAttend };
-    }
-
-    function getFebruaryWorkingDays() {
-      const today = new Date();
-      const febEnd = new Date("2026-02-28T23:59:59");
-      let count = 0;
-      let current = new Date(today);
-      current.setDate(current.getDate() + 1);
-      current.setHours(0, 0, 0, 0);
-
-      while (current <= febEnd) {
-        const dateStr = formatDate(current);
-        const schedule = getDaySchedule(dateStr);
-        const event = CALENDAR_EVENTS[dateStr];
-        if (schedule && (!event || event.status !== 'holiday')) {
-          count++;
-        }
-        current.setDate(current.getDate() + 1);
-      }
-      return count;
-    }
 
     function addPlannedLeave(dateStr) {
       if (!state.plannedLeaves) state.plannedLeaves = [];
@@ -3189,74 +3118,7 @@
       return `${dayName}, ${month} ${day}`;
     }
 
-    function renderFebruaryProjection() {
-      const { projectedStats, classesToAttend } = calculateFebruaryProjectedStats();
-      const febWorkingDays = getFebruaryWorkingDays();
-      const currentStats = calculateSubjectStats();
 
-      // Calculate overall stats
-      let currentTotal = 0, currentPresent = 0;
-      let febTotal = 0, febPresent = 0;
-
-      for (const code in currentStats) {
-        currentTotal += currentStats[code].total;
-        currentPresent += currentStats[code].present;
-      }
-
-      for (const code in projectedStats) {
-        febTotal += projectedStats[code].total;
-        febPresent += projectedStats[code].present;
-      }
-
-      const currentOverall = currentTotal > 0 ? (currentPresent / currentTotal) * 100 : 0;
-      const febOverall = febTotal > 0 ? (febPresent / febTotal) * 100 : 0;
-
-      let html = `
-        <div class="simulation-results" style="background: rgba(61, 90, 128, 0.08);">
-          <div class="result-row">
-            <span class="result-label">Current Attendance</span>
-            <span class="result-value ${currentOverall >= state.settings.targetPercentage ? 'positive' : 'negative'}">${currentOverall.toFixed(2)}%</span>
-          </div>
-          <div class="result-row" style="border-bottom: 2px solid var(--accent-secondary);">
-            <span class="result-label"><strong>📈 Projected by Feb 28</strong></span>
-            <span class="result-value ${febOverall >= state.settings.targetPercentage ? 'positive' : febOverall >= 60 ? 'warning' : 'negative'}" style="font-size: 1.2rem;">${febOverall.toFixed(2)}%</span>
-          </div>
-          <div class="result-row">
-            <span class="result-label">Feb Working Days Left</span>
-            <span class="result-value">${febWorkingDays}</span>
-          </div>
-          <div class="result-row">
-            <span class="result-label">Classes to Attend</span>
-            <span class="result-value" style="color: var(--accent-secondary);">${classesToAttend} periods</span>
-          </div>
-        </div>
-        
-        <div style="margin-top: 16px;">
-          <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; color: var(--accent-secondary);">📊 Subject-wise Feb Projection</div>
-          <div class="subject-sim-grid">`;
-
-      for (const code in projectedStats) {
-        const p = projectedStats[code];
-        const subject = SUBJECTS[code];
-        const isSafe = p.percent >= state.settings.targetPercentage;
-        const color = isSafe ? 'var(--success)' : (p.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
-
-        html += `
-          <div class="subject-sim-card" style="border: 1px solid ${color}30;">
-            <div class="subject-sim-header">
-              <span class="subject-sim-code">${code}</span>
-              <span class="subject-sim-percent" style="color: ${color}">${p.percent.toFixed(1)}%</span>
-            </div>
-            <div class="subject-sim-bar">
-              <div class="subject-sim-fill" style="width: ${Math.min(100, p.percent)}%; background: ${color}"></div>
-            </div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">${p.present}/${p.total}</div>
-          </div>`;
-      }
-
-      html += `</div></div>`;
-      return html;
-    }
 
     function renderSimulator() {
       if (!state.plannedLeaves) state.plannedLeaves = [];
@@ -3354,6 +3216,10 @@
               <span class="result-label">Projected (End of Semester)</span>
               <span class="result-value ${projectedOverall >= state.settings.targetPercentage ? 'positive' : projectedOverall >= 60 ? 'warning' : 'negative'}">${projectedOverall.toFixed(2)}%</span>
             </div>
+            ${state.plannedLeaves.length > 0 ? `<div class="result-row" style="border-bottom: 2px solid var(--danger);">
+              <span class="result-label"><strong>📉 Attendance Drop</strong></span>
+              <span class="result-value negative" style="font-size: 1.1rem;">${(projectedOverall - currentOverall) >= 0 ? '+' : ''}${(projectedOverall - currentOverall).toFixed(2)}%</span>
+            </div>` : ''}
             <div class="result-row">
               <span class="result-label">Working Days Remaining</span>
               <span class="result-value">${workingDays.length}</span>
@@ -3373,15 +3239,74 @@
           </div>
         </div>
         
-        <div class="simulator-card" style="border: 2px solid var(--accent-secondary); background: linear-gradient(135deg, rgba(61, 90, 128, 0.05), rgba(61, 90, 128, 0.1));">
+        ${state.plannedLeaves.length > 0 ? `
+        <div class="simulator-card" style="border-left: 4px solid var(--accent-primary);">
           <div class="simulator-header">
-            <div class="simulator-title" style="color: var(--accent-secondary);"><i class="fas fa-calendar-check"></i> 📅 February End Projection</div>
+            <div class="simulator-title"><i class="fas fa-list-alt"></i> Leave Day Breakdown</div>
           </div>
-          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-            If you attend <strong>ALL</strong> remaining classes till 28th February:
-          </p>
-          ${renderFebruaryProjection()}
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">Classes you'll miss on each leave day:</p>
+          ${state.plannedLeaves.map(dateStr => {
+            const schedule = getDaySchedule(dateStr);
+            const d = new Date(dateStr + 'T00:00:00');
+            const dayName = DAYS[d.getDay()];
+            let classesHtml = '';
+            let count = 0;
+            if (schedule) {
+              for (const period of ['P1','P2','P3','P4','P5']) {
+                const subjectCode = schedule[period];
+                if (subjectCode) {
+                  const subject = SUBJECTS[subjectCode];
+                  count++;
+                  classesHtml += `<div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: ${subject.color}10; border-radius: 8px; margin-bottom: 4px;">
+                    <span style="background: ${subject.color}; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; min-width: 44px; text-align: center;">${subjectCode}</span>
+                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${TIME_SLOTS[period].start} – ${TIME_SLOTS[period].end}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: auto;">${period}</span>
+                  </div>`;
+                }
+              }
+            }
+            return `<div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; font-size: 0.9rem;">${dayName}, ${formatShortDate(dateStr)}</span>
+                <span style="font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; background: rgba(224, 87, 87, 0.1); color: var(--danger); font-weight: 600;">${count} classes</span>
+              </div>
+              ${classesHtml}
+            </div>`;
+          }).join('')}
+          
+          <div style="background: var(--bg-tertiary); border-radius: 10px; padding: 12px; margin-top: 4px;">
+            <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 8px;">📊 Classes Missed by Subject</div>
+            ${(() => {
+              const missed = {};
+              for (const dateStr of state.plannedLeaves) {
+                const schedule = getDaySchedule(dateStr);
+                if (schedule) {
+                  for (const period of ['P1','P2','P3','P4','P5']) {
+                    const sc = schedule[period];
+                    if (sc) missed[sc] = (missed[sc] || 0) + 1;
+                  }
+                }
+              }
+              return Object.entries(missed).map(([code, count]) => {
+                const subject = SUBJECTS[code];
+                const curr = currentStats[code];
+                const proj = projectedStats[code];
+                const change = proj.percent - curr.percent;
+                return `<div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-subtle);">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="background: ${subject.color}; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700;">${code}</span>
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">${count} period${count > 1 ? 's' : ''}</span>
+                  </div>
+                  <div style="text-align: right;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: ${proj.percent >= state.settings.targetPercentage ? 'var(--success)' : 'var(--danger)'};">${proj.percent.toFixed(1)}%</span>
+                    <span style="font-size: 0.7rem; color: var(--danger); margin-left: 4px;">(${change >= 0 ? '+' : ''}${change.toFixed(1)}%)</span>
+                  </div>
+                </div>`;
+              }).join('');
+            })()}
+          </div>
         </div>
+        ` : ''}
         
         <div class="simulator-card">
           <div class="simulator-header">
