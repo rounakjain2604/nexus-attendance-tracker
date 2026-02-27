@@ -2096,7 +2096,7 @@
       font-weight: 300;
     }
 
-    /* Subject Scroll Strip */
+    /* Subject Grid */
     .dash-section-label {
       font-family: 'Outfit', sans-serif;
       font-weight: 600;
@@ -2113,92 +2113,111 @@
       font-size: 0.9rem;
     }
 
-    .subject-scroll {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+    .subj-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
     }
 
-    .subject-scroll::-webkit-scrollbar {
-      display: none;
-    }
-
-    .subj-chip {
-      flex-shrink: 0;
-      width: 130px;
+    .subj-tile {
       background: var(--bg-secondary);
       border-radius: 14px;
       padding: 14px;
       border: 1px solid var(--border-subtle);
       box-shadow: var(--shadow-soft);
-      scroll-snap-align: start;
       transition: all 0.2s ease;
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
 
-    .subj-chip:hover {
-      transform: translateY(-2px);
+    .subj-tile:hover {
       box-shadow: var(--shadow-medium);
     }
 
-    .subj-chip-header {
+    .subj-tile:active {
+      transform: scale(0.97);
+    }
+
+    .subj-tile-top {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
       margin-bottom: 8px;
     }
 
-    .subj-chip-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    .subj-tile-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
     }
 
-    .subj-chip-code {
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .subj-chip-percent {
+    .subj-tile-percent {
       font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 1.3rem;
-      margin-bottom: 6px;
+      font-size: 1.4rem;
+      line-height: 1;
     }
 
-    .subj-chip-bar {
+    .subj-tile-code {
+      font-weight: 700;
+      font-size: 0.8rem;
+      margin-bottom: 2px;
+    }
+
+    .subj-tile-name {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      line-height: 1.2;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .subj-tile-bar {
       height: 4px;
       background: var(--bg-tertiary);
       border-radius: 2px;
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
-    .subj-chip-fill {
+    .subj-tile-fill {
       height: 100%;
       border-radius: 2px;
       transition: width 0.6s ease;
     }
 
-    .subj-chip-badge {
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 8px;
-      display: inline-block;
+    .subj-tile-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .subj-chip-badge.safe {
+    .subj-tile-counts {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+
+    .subj-tile-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+
+    .subj-tile-badge.safe {
       background: rgba(91, 185, 140, 0.15);
       color: var(--success);
     }
 
-    .subj-chip-badge.danger {
+    .subj-tile-badge.danger {
       background: rgba(224, 87, 87, 0.15);
       color: var(--danger);
     }
@@ -2855,11 +2874,11 @@
         </div>
       </div>`;
 
-      // === Subject Scroll Strip ===
+      // === Subject Grid ===
       html += `
       <div style="margin: 24px 0 16px">
         <div class="dash-section-label"><i class="fas fa-chart-line"></i> Subjects</div>
-        <div class="subject-scroll">`;
+        <div class="subj-grid">`;
 
       for (const code in subjectStats) {
         const s = subjectStats[code];
@@ -2871,20 +2890,23 @@
         const badgeText = bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Need ${bunkInfo.value}`;
 
         html += `
-        <div class="subj-chip" onclick="showView('syllabus'); toggleSubject('${code}')">
-          <div class="subj-chip-header">
-            <div class="subj-chip-dot" style="background: ${subject.color}"></div>
-            <span class="subj-chip-code">${code}</span>
+        <div class="subj-tile" onclick="showView('syllabus'); toggleSubject('${code}')">
+          <div class="subj-tile-top">
+            <div class="subj-tile-icon" style="background: ${subject.color}"><i class="fas ${subject.icon}"></i></div>
+            <span class="subj-tile-percent" style="color: ${color}">${s.percent.toFixed(1)}%</span>
           </div>
-          <div class="subj-chip-percent" style="color: ${color}">${s.percent.toFixed(1)}%</div>
-          <div class="subj-chip-bar">
-            <div class="subj-chip-fill" style="width: ${Math.min(100, s.percent)}%; background: ${color}"></div>
+          <div class="subj-tile-code">${code}</div>
+          <div class="subj-tile-name">${subject.name}</div>
+          <div class="subj-tile-bar">
+            <div class="subj-tile-fill" style="width: ${Math.min(100, s.percent)}%; background: ${color}"></div>
           </div>
-          <span class="subj-chip-badge ${badgeClass}">${badgeText}</span>
+          <div class="subj-tile-footer">
+            <span class="subj-tile-counts">${s.present}/${s.total}</span>
+            <span class="subj-tile-badge ${badgeClass}">${badgeText}</span>
+          </div>
         </div>`;
       }
 
-      html += `</div></div>`;
 
       // === Today's Classes ===
       const todayDay = today.getDay();
