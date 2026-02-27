@@ -1960,6 +1960,464 @@
       max-height: 2000px;
       padding: 0 20px 20px;
     }
+    /* ═══════════════════════════════════════════════════════════════ */
+    /* DASHBOARD v2 — Modern Flat Layout                             */
+    /* ═══════════════════════════════════════════════════════════════ */
+
+    .dash-greeting h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .dash-greeting p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    /* Hero Card */
+    .hero-card {
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+      border-radius: 20px;
+      padding: 28px 20px;
+      margin: 20px 0 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-medium);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .hero-ring-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      flex-shrink: 0;
+    }
+
+    .hero-ring-wrap svg {
+      transform: rotate(-90deg);
+    }
+
+    .hero-ring-wrap circle {
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .hero-ring-wrap .hero-bg {
+      stroke: var(--bg-tertiary);
+      stroke-width: 8;
+    }
+
+    .hero-ring-wrap .hero-fg {
+      stroke-width: 8;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hero-percent {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .hero-percent-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .hero-percent-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .hero-details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hero-stat-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .hero-badge.safe {
+      background: rgba(91, 185, 140, 0.15);
+      color: var(--success);
+    }
+
+    .hero-badge.danger {
+      background: rgba(224, 87, 87, 0.15);
+      color: var(--danger);
+    }
+
+    .hero-target {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-weight: 300;
+    }
+
+    /* Subject Scroll Strip */
+    .dash-section-label {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dash-section-label i {
+      color: var(--accent-primary);
+      font-size: 0.9rem;
+    }
+
+    .subject-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .subject-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .subj-chip {
+      flex-shrink: 0;
+      width: 130px;
+      background: var(--bg-secondary);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      scroll-snap-align: start;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .subj-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .subj-chip-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .subj-chip-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .subj-chip-code {
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .subj-chip-percent {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .subj-chip-bar {
+      height: 4px;
+      background: var(--bg-tertiary);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .subj-chip-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s ease;
+    }
+
+    .subj-chip-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .subj-chip-badge.safe {
+      background: rgba(91, 185, 140, 0.15);
+      color: var(--success);
+    }
+
+    .subj-chip-badge.danger {
+      background: rgba(224, 87, 87, 0.15);
+      color: var(--danger);
+    }
+
+    /* Today's Classes */
+    .today-class-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .today-class-card:active {
+      transform: scale(0.98);
+    }
+
+    .today-class-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .today-class-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .today-class-subj {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .today-class-time {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .today-class-btns {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tq-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.15s ease;
+    }
+
+    .tq-btn:hover {
+      border-color: var(--text-secondary);
+    }
+
+    .tq-btn.active.present {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .tq-btn.active.absent {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+
+    .tq-btn.active.cancelled {
+      background: var(--neutral);
+      border-color: var(--neutral);
+      color: white;
+    }
+
+    /* Week Strip */
+    .week-strip {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+
+    .week-pill {
+      flex: 1;
+      text-align: center;
+      padding: 10px 4px;
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+    }
+
+    .week-pill.today {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      box-shadow: 0 4px 12px rgba(224, 122, 95, 0.3);
+    }
+
+    .week-pill.today .week-pill-day,
+    .week-pill.today .week-pill-count {
+      color: white;
+    }
+
+    .week-pill.weekend {
+      opacity: 0.4;
+    }
+
+    .week-pill-day {
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .week-pill-count {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Exam Preview Cards */
+    .exam-preview-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-secondary);
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 8px;
+    }
+
+    .exam-date-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(159, 134, 192, 0.12);
+    }
+
+    .exam-date-day {
+      font-weight: 700;
+      font-size: 1rem;
+      line-height: 1;
+      color: #9F86C0;
+    }
+
+    .exam-date-mon {
+      font-size: 0.55rem;
+      font-weight: 600;
+      color: #9F86C0;
+      text-transform: uppercase;
+    }
+
+    .exam-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .exam-subject {
+      font-weight: 600;
+      font-size: 0.82rem;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .exam-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .exam-days-badge {
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .dash-empty-state {
+      text-align: center;
+      padding: 24px 16px;
+      background: var(--bg-secondary);
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .dash-empty-state i {
+      font-size: 2rem;
+      color: var(--accent-primary);
+      margin-bottom: 8px;
+    }
+
+    .dash-empty-state p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+    }
+
   </style>
 </head>
 
@@ -2191,17 +2649,7 @@
     let calendarMonth = new Date().getMonth();
     let calendarYear = new Date().getFullYear();
     let expandedSubjects = {};
-    let dashboardSections = {
-      subjectOverview: false,
-      weeklyTimetable: false,
-      ciaExamTimetable: false
-    };
 
-    function toggleDashboardSection(sectionId) {
-      hapticFeedback();
-      dashboardSections[sectionId] = !dashboardSections[sectionId];
-      renderDashboard();
-    }
 
     function loadState() {
       try {
@@ -2351,201 +2799,181 @@
       const dateStr = formatDate(today);
       const schedule = getDaySchedule(dateStr);
       const log = state.logs[dateStr] || {};
-
-      // Get greeting based on time
-      const hour = today.getHours();
-      const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-
-      // Calculate overall stats for preview
       const stats = calculateStats();
-      const subjectCount = Object.keys(subjectStats).length;
-      const avgPercent = subjectCount > 0 ? Object.values(subjectStats).reduce((sum, s) => sum + s.percent, 0) / subjectCount : 0;
+      const bunk = calculateBunk(stats);
 
-      // Get today's info for timetable preview
+      // Greeting
+      const hour = today.getHours();
+      const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+      // Hero ring
+      const ringSize = 110;
+      const ringRadius = (ringSize - 16) / 2;
+      const ringCircumference = 2 * Math.PI * ringRadius;
+      const ringOffset = ringCircumference - (Math.min(100, stats.percent) / 100) * ringCircumference;
+      const ringColor = stats.percent >= state.settings.targetPercentage ? 'var(--success)' : (stats.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
+
+      let html = `
+      <div class="dash-greeting">
+        <h1>${greeting},</h1>
+        <p>Here's your attendance overview</p>
+      </div>
+
+      <!-- Hero Card -->
+      <div class="hero-card">
+        <div class="hero-ring-wrap">
+          <svg width="${ringSize}" height="${ringSize}">
+            <circle class="hero-bg" cx="${ringSize/2}" cy="${ringSize/2}" r="${ringRadius}"></circle>
+            <circle class="hero-fg" cx="${ringSize/2}" cy="${ringSize/2}" r="${ringRadius}"
+              stroke="${ringColor}" stroke-dasharray="${ringCircumference}" stroke-dashoffset="${ringOffset}"></circle>
+          </svg>
+          <div class="hero-percent">
+            <div class="hero-percent-value" style="color: ${ringColor}">${stats.percent.toFixed(1)}%</div>
+            <div class="hero-percent-label">Overall</div>
+          </div>
+        </div>
+        <div class="hero-details">
+          <div class="hero-stat-row">
+            <div class="hero-stat">
+              <span class="hero-stat-value" style="color: var(--success)">${stats.present}</span>
+              <span class="hero-stat-label">Present</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-value" style="color: var(--danger)">${stats.absent}</span>
+              <span class="hero-stat-label">Absent</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-value" style="color: var(--neutral)">${stats.cancelled}</span>
+              <span class="hero-stat-label">Cancelled</span>
+            </div>
+          </div>
+          <div class="hero-badge ${bunk.type === 'safe' ? 'safe' : 'danger'}">
+            <i class="fas ${bunk.type === 'safe' ? 'fa-shield-alt' : 'fa-exclamation-triangle'}" style="font-size: 0.75rem;"></i>
+            ${bunk.type === 'safe' ? `Can bunk ${bunk.value} classes` : `Must attend ${bunk.value} classes`}
+          </div>
+          <div class="hero-target">Target: ${state.settings.targetPercentage}% • ${stats.total} classes counted</div>
+        </div>
+      </div>`;
+
+      // === Subject Scroll Strip ===
+      html += `
+      <div style="margin: 24px 0 16px">
+        <div class="dash-section-label"><i class="fas fa-chart-line"></i> Subjects</div>
+        <div class="subject-scroll">`;
+
+      for (const code in subjectStats) {
+        const s = subjectStats[code];
+        const subject = SUBJECTS[code];
+        const bunkInfo = calculateSubjectBunk(code, subjectStats);
+        const isSafe = s.percent >= state.settings.targetPercentage;
+        const color = isSafe ? subject.color : (s.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
+        const badgeClass = isSafe ? 'safe' : 'danger';
+        const badgeText = bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Need ${bunkInfo.value}`;
+
+        html += `
+        <div class="subj-chip" onclick="showView('syllabus'); toggleSubject('${code}')">
+          <div class="subj-chip-header">
+            <div class="subj-chip-dot" style="background: ${subject.color}"></div>
+            <span class="subj-chip-code">${code}</span>
+          </div>
+          <div class="subj-chip-percent" style="color: ${color}">${s.percent.toFixed(1)}%</div>
+          <div class="subj-chip-bar">
+            <div class="subj-chip-fill" style="width: ${Math.min(100, s.percent)}%; background: ${color}"></div>
+          </div>
+          <span class="subj-chip-badge ${badgeClass}">${badgeText}</span>
+        </div>`;
+      }
+
+      html += `</div></div>`;
+
+      // === Today's Classes ===
       const todayDay = today.getDay();
-      const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-      const todayName = dayNames[todayDay];
-      const todaySchedule = SCHEDULE[todayName];
-      const classCount = todaySchedule ? Object.values(todaySchedule).filter(v => v !== null).length : 0;
+      html += `
+      <div style="margin-bottom: 20px">
+        <div class="dash-section-label"><i class="fas fa-clock"></i> Today's Classes</div>`;
 
-      // Get next exam info for CIA preview
+      if (!schedule) {
+        const dayName = DAYS[todayDay];
+        html += `
+        <div class="dash-empty-state">
+          <i class="fas fa-umbrella-beach"></i>
+          <p>No classes today — enjoy your ${dayName}!</p>
+        </div>`;
+      } else {
+        for (const period of ['P1', 'P2', 'P3', 'P4', 'P5']) {
+          const subjectCode = schedule[period];
+          if (!subjectCode) continue;
+          const subject = SUBJECTS[subjectCode];
+          const status = log[period] || null;
+
+          html += `
+          <div class="today-class-card">
+            <div class="today-class-icon" style="background: ${subject.color}">
+              <i class="fas ${subject.icon}"></i>
+            </div>
+            <div class="today-class-info">
+              <div class="today-class-subj">${subjectCode} <span style="font-weight: 400; color: var(--text-secondary); font-size: 0.8rem;">· ${subject.name}</span></div>
+              <div class="today-class-time">${TIME_SLOTS[period].start} – ${TIME_SLOTS[period].end} · ${TIME_SLOTS[period].label}</div>
+            </div>
+            <div class="today-class-btns">
+              <button class="tq-btn ${status === 'present' ? 'active present' : ''}" onclick="quickLog('${dateStr}','${period}','present',event)" title="Present"><i class="fas fa-check"></i></button>
+              <button class="tq-btn ${status === 'absent' ? 'active absent' : ''}" onclick="quickLog('${dateStr}','${period}','absent',event)" title="Absent"><i class="fas fa-times"></i></button>
+              <button class="tq-btn ${status === 'cancelled' ? 'active cancelled' : ''}" onclick="quickLog('${dateStr}','${period}','cancelled',event)" title="Cancelled"><i class="fas fa-ban"></i></button>
+            </div>
+          </div>`;
+        }
+      }
+
+      html += `</div>`;
+
+      // === Week at a Glance ===
+      const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const weekDaysFull = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+      html += `
+      <div style="margin-bottom: 20px">
+        <div class="dash-section-label"><i class="fas fa-calendar-week"></i> This Week</div>
+        <div class="week-strip">`;
+
+      for (let i = 0; i < 7; i++) {
+        const dayIdx = i + 1 <= 6 ? i + 1 : 0; // Mon=1 ... Sat=6, Sun=0
+        const isToday = todayDay === dayIdx;
+        const sch = SCHEDULE[weekDaysFull[i]];
+        const count = sch ? Object.values(sch).filter(v => v !== null).length : 0;
+        const isWeekend = dayIdx === 0 || dayIdx === 6;
+
+        html += `
+        <div class="week-pill ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">
+          <div class="week-pill-day">${weekDays[i]}</div>
+          <div class="week-pill-count">${count > 0 ? count + ' cls' : '—'}</div>
+        </div>`;
+      }
+
+      html += `</div></div>`;
+
+      // === Upcoming Exams ===
       const ciaExams = [];
-      const todayDateStr = formatDate(today);
       for (const ds in CALENDAR_EVENTS) {
         const event = CALENDAR_EVENTS[ds];
         if (event.label && (event.label.includes('CIA') || event.title.startsWith('CIA'))) {
           const examDate = new Date(ds + 'T00:00:00');
           const daysUntil = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
-          ciaExams.push({
-            date: ds,
-            examDate: examDate,
-            title: event.title,
-            label: event.label,
-            daysUntil: daysUntil
-          });
+          if (daysUntil >= 0) {
+            ciaExams.push({ date: ds, examDate, title: event.title, label: event.label, daysUntil });
+          }
         }
       }
       ciaExams.sort((a, b) => a.date.localeCompare(b.date));
-      const upcomingExams = ciaExams.filter(e => e.daysUntil >= 0);
-      const nextExam = upcomingExams.length > 0 ? upcomingExams[0] : null;
 
-      let html = `
-      <div style="margin-bottom: 24px;">
-        <h1 style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.75rem; color: var(--text-primary); margin-bottom: 4px;">${greeting},</h1>
-        <p style="color: var(--text-secondary); font-size: 1rem;">Here's your attendance status</p>
-      </div>`;
-
-      // === SECTION 1: Subject Overview (Collapsible) ===
-      const subjectExpanded = dashboardSections.subjectOverview;
-      const subjectPreview = `${stats.present}/${stats.total} attended • ${avgPercent.toFixed(1)}% avg`;
-
-      html += `
-      <div class="collapsible-section ${subjectExpanded ? 'expanded' : ''}" style="margin-top: 16px;">
-        <div class="collapsible-header" onclick="toggleDashboardSection('subjectOverview')">
-          <div class="collapsible-title-row">
-            <i class="fas fa-chart-line"></i>
-            <span class="collapsible-title">Subject Overview</span>
-            <span class="collapsible-preview">${subjectPreview}</span>
-          </div>
-          <i class="fas fa-chevron-down collapsible-toggle"></i>
-        </div>
-        <div class="collapsible-content">
-          <div class="subject-list-container">`;
-
-      // Add subject list cards
-      for (const code in subjectStats) {
-        const s = subjectStats[code];
-        const subject = SUBJECTS[code];
-        const bunkInfo = calculateSubjectBunk(code, subjectStats);
-
-        const isSafe = s.percent >= state.settings.targetPercentage;
-        const progressColor = isSafe ? subject.color : (s.percent >= 60 ? 'var(--warning)' : 'var(--danger)');
-        const badgeClass = isSafe ? 'safe' : 'danger';
-        const badgeText = bunkInfo.type === 'safe' ? `Bunk ${bunkInfo.value}` : `Attend ${bunkInfo.value}`;
-
-        html += `
-          <div class="subject-list-card" onclick="event.stopPropagation(); showView('syllabus'); toggleSubject('${code}')">
-            <div class="sl-icon" style="background: ${subject.color}; color: white;">
-              <i class="fas ${subject.icon}"></i>
-            </div>
-            <div class="sl-content">
-              <div class="sl-header">
-                <span class="sl-code">${code}</span>
-                <span class="sl-name">${subject.name}</span>
-              </div>
-              <div style="font-size: 0.7rem; color: var(--text-muted); margin: 4px 0;">${s.present}/${s.total} classes attended</div>
-              <div class="sl-progress-bg">
-                <div class="sl-progress-fill" style="width: ${s.percent}%; background: ${progressColor}"></div>
-              </div>
-            </div>
-            <div class="sl-stats">
-              <span class="sl-percent" style="color: ${progressColor}">${s.percent.toFixed(1)}%</span>
-              <span class="sl-badge ${badgeClass}">${badgeText}</span>
-            </div>
-          </div>`;
-      }
-
-      html += `
-          </div>
-        </div>
-      </div>`;
-
-      // === SECTION 2: Weekly Timetable (Collapsible) ===
-      const timetableExpanded = dashboardSections.weeklyTimetable;
-      const timetablePreview = todayDay === 0 || todayDay === 6
-        ? "Weekend - No classes"
-        : `Today: ${todayName.substring(0, 3).toUpperCase()} • ${classCount} classes`;
-
-      html += `
-      <div class="collapsible-section ${timetableExpanded ? 'expanded' : ''}">
-        <div class="collapsible-header" onclick="toggleDashboardSection('weeklyTimetable')">
-          <div class="collapsible-title-row">
-            <i class="fas fa-table"></i>
-            <span class="collapsible-title">Weekly Timetable</span>
-            <span class="collapsible-preview">${timetablePreview}</span>
-          </div>
-          <i class="fas fa-chevron-down collapsible-toggle"></i>
-        </div>
-        <div class="collapsible-content">
-          <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
-            <thead>
-              <tr style="background: var(--bg-tertiary);">
-                <th style="padding: 8px 4px; text-align: left; font-weight: 600; border-radius: 6px 0 0 6px;">Day</th>
-                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P1<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:00</span></th>
-                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P2<br><span style="font-size: 0.6rem; color: var(--text-muted);">6:40</span></th>
-                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P3<br><span style="font-size: 0.6rem; color: var(--text-muted);">7:20</span></th>
-                <th style="padding: 8px 4px; text-align: center; font-weight: 500;">P4<br><span style="font-size: 0.6rem; color: var(--text-muted);">8:30</span></th>
-                <th style="padding: 8px 4px; text-align: center; font-weight: 500; border-radius: 0 6px 6px 0;">P5<br><span style="font-size: 0.6rem; color: var(--text-muted);">9:10</span></th>
-              </tr>
-            </thead>
-            <tbody>`;
-
-      const dayAbbr = ["MON", "TUE", "WED", "THU", "FRI"];
-      const weekdayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-
-      for (let i = 0; i < weekdayNames.length; i++) {
-        const sch = SCHEDULE[weekdayNames[i]];
-        const isToday = todayDay === i + 1;
-        const rowBg = isToday ? 'background: rgba(224, 122, 95, 0.1); font-weight: 600;' : '';
-
-        html += `<tr style="${rowBg}">
-          <td style="padding: 10px 4px; font-weight: 600; ${isToday ? 'color: var(--accent-primary);' : ''}">${dayAbbr[i]}${isToday ? ' 📍' : ''}</td>`;
-
-        for (const period of ["P1", "P2", "P3", "P4", "P5"]) {
-          const subjectCode = sch ? sch[period] : null;
-          if (subjectCode) {
-            const subject = SUBJECTS[subjectCode];
-            html += `<td style="padding: 6px 2px; text-align: center;">
-              <div style="background: ${subject.color}20; color: ${subject.color}; padding: 4px 6px; border-radius: 6px; font-weight: 600; font-size: 0.7rem;">${subjectCode}</div>
-            </td>`;
-          } else {
-            html += `<td style="padding: 6px 2px; text-align: center; color: var(--text-muted);">—</td>`;
-          }
-        }
-
-        html += `</tr>`;
-      }
-
-      html += `
-            </tbody>
-          </table>
-        </div>
-      </div>`;
-
-      // === SECTION 3: CIA Exam Timetable (Collapsible) ===
       if (ciaExams.length > 0) {
-        const ciaExpanded = dashboardSections.ciaExamTimetable;
-        const ciaPreview = nextExam
-          ? (nextExam.daysUntil === 0 ? "Exam today!" : `Next exam in ${nextExam.daysUntil} day${nextExam.daysUntil !== 1 ? 's' : ''}`)
-          : "All exams completed";
-
+        const showExams = ciaExams.slice(0, 3);
         html += `
-        <div class="collapsible-section ${ciaExpanded ? 'expanded' : ''}">
-          <div class="collapsible-header" onclick="toggleDashboardSection('ciaExamTimetable')">
-            <div class="collapsible-title-row">
-              <i class="fas fa-file-alt"></i>
-              <span class="collapsible-title">CIA Exam Timetable</span>
-              <span class="collapsible-preview">${ciaPreview}</span>
-            </div>
-            <i class="fas fa-chevron-down collapsible-toggle"></i>
-          </div>
-          <div class="collapsible-content">
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; table-layout: fixed;">
-              <thead>
-                <tr style="background: linear-gradient(135deg, var(--accent-primary), #9F86C0); color: white;">
-                  <th style="padding: 12px 8px; text-align: left; font-weight: 600; width: 80px;">Date</th>
-                  <th style="padding: 12px 8px; text-align: left; font-weight: 600;">Subject</th>
-                  <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 70px;">Time</th>
-                  <th style="padding: 12px 8px; text-align: center; font-weight: 600; width: 55px;">Days</th>
-                </tr>
-              </thead>
-              <tbody>`;
+        <div style="margin-bottom: 20px">
+          <div class="dash-section-label"><i class="fas fa-file-alt"></i> Upcoming Exams</div>`;
 
-        ciaExams.forEach((exam, idx) => {
-          const examDate = exam.examDate;
-          const dayName = DAYS[examDate.getDay()].substring(0, 3).toUpperCase();
-          const dateDisplay = `${dayName}, ${examDate.getDate()} ${MONTHS[examDate.getMonth()].substring(0, 3)}`;
-
+        for (const exam of showExams) {
+          const ed = exam.examDate;
+          const monthShort = MONTHS[ed.getMonth()].substring(0, 3);
           let subjectName = exam.title.replace('CIA: ', '').replace('CIA ', '');
           let examTime = '';
           if (subjectName.includes('|')) {
@@ -2556,61 +2984,44 @@
             examTime = '8:30 AM+';
           } else if (exam.label === 'CIA SEMINAR') {
             examTime = 'TBA';
-          } else if (exam.label === 'NO CLASS') {
-            examTime = '-';
-          }
-
-          let daysColor = 'var(--text-muted)';
-          let daysBg = 'transparent';
-          let daysText = exam.daysUntil > 0 ? exam.daysUntil : (exam.daysUntil === 0 ? 'Today!' : 'Done');
-
-          if (exam.daysUntil <= 0) {
-            daysColor = 'var(--neutral)';
-            daysBg = 'rgba(119, 119, 119, 0.1)';
-          } else if (exam.daysUntil <= 3) {
-            daysColor = 'var(--danger)';
-            daysBg = 'rgba(204, 51, 51, 0.1)';
-          } else if (exam.daysUntil <= 7) {
-            daysColor = 'var(--warning)';
-            daysBg = 'rgba(204, 136, 0, 0.1)';
           } else {
-            daysColor = 'var(--success)';
-            daysBg = 'rgba(46, 139, 87, 0.1)';
+            examTime = exam.label;
           }
 
-          let labelColor = '#9F86C0';
-          if (exam.label === 'CIA PRACTICAL') labelColor = '#3D5A80';
-          else if (exam.label === 'CIA SEMINAR') labelColor = '#E07A5F';
-          else if (exam.label === 'NO CLASS') labelColor = 'var(--neutral)';
-
-          const rowBg = idx % 2 === 0 ? 'var(--bg-secondary)' : 'var(--bg-primary)';
+          let daysBg, daysColor;
+          if (exam.daysUntil === 0) { daysBg = 'rgba(204, 51, 51, 0.15)'; daysColor = 'var(--danger)'; }
+          else if (exam.daysUntil <= 3) { daysBg = 'rgba(204, 51, 51, 0.1)'; daysColor = 'var(--danger)'; }
+          else if (exam.daysUntil <= 7) { daysBg = 'rgba(204, 136, 0, 0.1)'; daysColor = 'var(--warning)'; }
+          else { daysBg = 'rgba(46, 139, 87, 0.1)'; daysColor = 'var(--success)'; }
 
           html += `
-            <tr style="background: ${rowBg}; border-bottom: 1px solid var(--border-subtle);">
-              <td style="padding: 10px 8px; vertical-align: top;">
-                <div style="font-weight: 600; color: var(--text-primary); font-size: 0.75rem;">${dateDisplay}</div>
-                <div style="font-size: 0.6rem; color: ${labelColor}; font-weight: 600; margin-top: 2px;">${exam.label}</div>
-              </td>
-              <td style="padding: 10px 8px; vertical-align: top;">
-                <div style="color: var(--text-primary); line-height: 1.4; font-size: 0.75rem; word-wrap: break-word; overflow-wrap: break-word;">${subjectName}</div>
-              </td>
-              <td style="padding: 10px 8px; text-align: center; vertical-align: top;">
-                <span style="font-size: 0.7rem; color: var(--text-secondary);">${examTime}</span>
-              </td>
-              <td style="padding: 10px 8px; text-align: center; vertical-align: top;">
-                <span style="display: inline-block; padding: 3px 8px; border-radius: 10px; font-weight: 700; font-size: 0.7rem; color: ${daysColor}; background: ${daysBg};">${daysText}</span>
-              </td>
-            </tr>`;
-        });
+          <div class="exam-preview-card">
+            <div class="exam-date-box">
+              <span class="exam-date-day">${ed.getDate()}</span>
+              <span class="exam-date-mon">${monthShort}</span>
+            </div>
+            <div class="exam-info">
+              <div class="exam-subject">${subjectName}</div>
+              <div class="exam-time">${examTime}</div>
+            </div>
+            <span class="exam-days-badge" style="background: ${daysBg}; color: ${daysColor}">
+              ${exam.daysUntil === 0 ? 'Today!' : exam.daysUntil + 'd'}
+            </span>
+          </div>`;
+        }
 
-        html += `
-              </tbody>
-            </table>
-          </div>
-        </div>`;
+        if (ciaExams.length > 3) {
+          html += `<div style="text-align: center; padding: 8px;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); cursor: pointer;" onclick="showView('calendar')">
+              +${ciaExams.length - 3} more — view calendar →
+            </span>
+          </div>`;
+        }
+
+        html += `</div>`;
       }
 
-      document.getElementById("dashboardView").innerHTML = html;
+      document.getElementById('dashboardView').innerHTML = html;
     }
 
     function quickLog(dateStr, period, status, event) {
